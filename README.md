@@ -3,26 +3,20 @@
 esg-dashboard
 ============================
 
+Experimental dashboard project to explore non-shiny dashboarding options. Some possibilities include quarto documents, quarto dashboards, flexdashboards incorporating widgets (plotly, leaflet) or observable or crosstalk for interactivity.
+
 ### Usage
 
-Describe data being used (links), and how to run. Eg:
+There are four core folders that are required to run the dashboard:
 
-There are four core scripts that are required for the analysis, they need to be run in order:
-
--   01\_clean.R
--   02\_analysis.R
--   03\_visualize.R
--   04\_output.R
-
-#### Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-## basic example code
-```
+-   01\_data - contains any data for the dashboards
+-   02\_images - contains the bc gov logo and other images in future
+-   03\_styles - contains the css file styles.css
+-   04\_dashboards - contains the qmd files for the dashboards
 
 ### Project Status
+
+Experimental
 
 ### Getting Help or Reporting an Issue
 
