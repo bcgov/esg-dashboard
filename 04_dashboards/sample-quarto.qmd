@@ -26,7 +26,6 @@ format:
 # See the License for the specific language governing permissions and limitations under the License.
 ```
 
-
 ```{r packages}
 #| output: false
 library(tidyverse)
@@ -35,6 +34,8 @@ library(scales)
 library(janitor)
 library(lubridate)
 library(crosstalk)
+library(htmltools)
+library(DT)
 ```
 
 ```{r data}
@@ -198,8 +199,48 @@ plot_ly(data,
 
 # Social
 
+##  {.sidebar width="18%"}
+
+### Sidebar
+
+## Column {width="82%"}
+
+Main content
+
 # Governance
 
+##  {.sidebar width="18%"}
+
+### Sidebar
+
+## Column {width="82%"}
+
+Main content
+
 # Data
+
+## Row {.tabset}
+
+::: {.card title="Environment"}
+#### Fuel Source Data
+
+```{r}
+datatable(line_data %>% rename(`Fuel Source` = Variable))
+```
+
+#### Industry Data
+
+```{r}
+datatable(bar_data %>% rename(`Industry` = Variable))
+```
+:::
+
+::: {.card title="Social"}
+Social Data
+:::
+
+::: {.card title="Governance"}
+Governance Data
+:::
 
 # About
