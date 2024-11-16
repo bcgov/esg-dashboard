@@ -11,15 +11,6 @@
 # See the License for the specific language governing permissions and limitations under the License.*/
 
 
-h1 {
-  text-align: center;
-  color: #234075;
-}
-
-h4 {
-  color: #4F81BD;
-  margin-top: 0px;
-}
 
 a {
    color: #4F81BD;
@@ -34,5 +25,18 @@ div.figcaps {
 }
 
 nav.navbar {
-  background-color: rgb(8, 49, 85);
+  background-color: #0e3469;
 }
+
+/* formatting for active tab in navbar*/
+.quarto-dashboard #quarto-dashboard-header .navbar .navbar-nav .active {
+    background-color: #e3a82b;
+    color: #2D2D2D;
+}
+
+/* DT datatable striping color*/
+table.dataTable.stripe tbody tr.odd,
+table.dataTable.display tbody tr.odd {
+  background: #f6f9fc;
+}
+
