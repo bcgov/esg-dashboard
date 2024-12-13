@@ -11,8 +11,9 @@ There are four core folders that are required to run the dashboard:
 
 -   01\_data - contains any data for the dashboards
 -   02\_images - contains the bc gov logo and other images in future
--   03\_styles - contains the css file styles.css
--   04\_dashboards - contains the qmd files for the dashboards
+-   03\_styles - contains fonts, font styling in fonts.scss, and other styling in styles.css
+-   04\_scripts - contains scripts for functions, tables, and plots to be used in the dashboards
+-   05\_dashboards - contains the qmd files for the dashboards
 
 ### Project Status
 
