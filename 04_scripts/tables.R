@@ -93,6 +93,3 @@ t_soc <- htmltools::browsable(
 # htmltools::div(style = "padding: 1rem",
 #                reactable(plant_data, outlined = TRUE)
 # )
-
-
-

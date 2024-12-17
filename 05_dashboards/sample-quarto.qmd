@@ -31,6 +31,7 @@ format:
 source("../01_data/sample_data.R")
 source("../04_scripts/tables.R")
 source("../04_scripts/plots.R")
+source("../04_scripts/tables_with_some_new_optional_features.R")
 ```
 
 # Reactable
@@ -90,6 +91,16 @@ This is a simple callout note. More formatting options are available in the [qua
 <summary>Social Metrics By Industry</summary>
 
 `r t_soc`
+
+</details>
+
+### Row
+
+<details style="margin-bottom:0">
+
+<summary>Social Metrics By Industry Part Deux</summary>
+
+`r t_soc2`
 
 </details>
 
