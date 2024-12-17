@@ -1,0 +1,67 @@
+---
+title: "[ESG Centre of Excellence](https://www.esgbc.ca) Dashboard"
+execute: 
+  echo: false
+format:
+   dashboard:
+     logo: ../02_images/BCID_V_rgb_rev.png
+     nav-buttons:
+        icon: github
+        href: https://github.com/bcgov-c/esg-dashboard
+     self-contained: true
+     css: ../03_styles/styles.css
+---
+
+```{css}
+  /* Default styles for large screens */
+  .rt-table {
+    width: 100%;
+    font-size: 16px;
+    border-collapse: collapse;
+  }
+
+  /* Medium screens (tablets) */
+  @media (max-width: 1024px) {
+    .rt-table {
+      font-size: 14px;  /* Reduce font size for tablets */
+    }
+
+    /* Optionally adjust column layout or hide columns */
+    .rt-table .rt-th, .rt-table .rt-td {
+      padding: 8px;
+    }
+  
+  }
+
+  /* Small screens (mobiles)  600px*/ 
+  @media (max-width: 600px) {
+    .rt-table {
+      font-size: 12px;
+      overflow-x: auto;
+    }
+
+    .rt-table .rt-th, .rt-table .rt-td {
+      padding: 6px;
+    }
+
+    #penguins .rt-td:nth-child(2),  #penguins .rt-th:nth-child(2) {
+      display: none;
+    }
+  }
+```
+
+
+```{r}
+library(reactable)
+
+reactable(palmerpenguins::penguins, elementId = 'penguins')
+```
+
+Conclusions:
+
+- The class of all reactables is `.rt-table`
+- The header class of a reactable is `.rt-table .rt-th`. The body class is `.rt-table .rt-td`. Consequently, if you want to hit both the header and the body, you can use `.rt-table .rt-th, .rt-table .rt-td`.
+- You can assign an id to an individual table with the `elementId` argument. Hence, you can select elements by id with `#id .rt-th, #id .rt-th`.
+- Individual columns can be accessed with `nth-child()`. To select the first column for the whole class of reactables, use `.rt-table .rt-td:nth-child(1), .rt-table .rt-td:nth-child(1)` and by id, use `#id .rt-td:nth-child(1), #id .rt-td:nth-child(1)`.
+- The CSS above is adapted from Claude's, but obviously tailor it to how you like.
+- You might be able to do fancier things like adjust the number of rows but you'd need to embed javascript in the reactable and that's not easy.
