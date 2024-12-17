@@ -1,23 +1,5 @@
 pacman::p_load(reactablefmtr)
 
-# t = ind_data |>
-#   filter(UOM == "Persons", Sex == "Both sexes") |>
-#   group_by(Industry, Characteristic, REF_DATE) |>
-#   summarise(VALUE = sum(VALUE)) |>
-#   arrange(Industry, Characteristic, REF_DATE)
-# 
-# t_outer = t |>
-#   pivot_wider(names_from = Characteristic, values_from = VALUE) |>
-#   group_by(Industry) |>
-#   summarise(across(3:last_col(), ~list(.))) |>
-#   select(Industry, Employment)  # only one sparkline is enough, dammit. It would be nice to be able to print the years in the tooltips as well but I can't figure that out.
-# 
-# 
-# ind_data |>
-#   filter(UOM == "Persons", Sex == "Both sexes") |>
-#   group_by(Industry, Characteristic, REF_DATE) |>
-#   summarise(VALUE = sum(VALUE))
-
 last_year = max(ind_data$REF_DATE)
 
 t_employment = ind_data |>
