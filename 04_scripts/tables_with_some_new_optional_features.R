@@ -20,11 +20,8 @@ t_percent_female = ind_data |>
   as_tibble() |>
   select(Industry, Percent_female)
   
-
-
 t_outer = t_employment |>
   inner_join(t_percent_female)
-
 
 t_soc2 = suppressWarnings( # this is because the sparkline thingy makes a weird warning
   reactable(
@@ -47,8 +44,8 @@ t_soc2 = suppressWarnings( # this is because the sparkline thingy makes a weird 
         ggplot(aes(x=REF_DATE, y=VALUE, color=Industry, group=Industry, alpha=.2)) +
         geom_line() +
         geom_point() +
-        geom_line(data = filter(g, Industry == the_industry), color='black', size=2, alpha=1) +
-        geom_point(data = filter(g, Industry == the_industry), color='black', size=3, alpha = 1) +
+        geom_line(data = filter(g_tibble, Industry == the_industry), color='black', size=2, alpha=1) +
+        geom_point(data = filter(g_tibble, Industry == the_industry), color='black', size=3, alpha = 1) +
         ggthemes::theme_clean() +
         labs(y="Unemployment Rate", x = "Year") +
         theme(legend.position = 'none') +
@@ -83,9 +80,6 @@ t_soc2 = suppressWarnings( # this is because the sparkline thingy makes a weird 
     }
   )
 )
-
-t_soc2
-
 
 
 # Note: the printing of "NA" in percent_female is very annoying. See https://stackoverflow.com/questions/79096431/how-to-ignore-na-when-using-icon-sets-in-reactablefmtr-package -- that didn't work. I also tried writing a function for the cell (ie if is.na(value) then "" else data_bars...) Finally, I tried setting the na argument to "". Nope.

@@ -98,7 +98,7 @@ This is a simple callout note. More formatting options are available in the [qua
 
 <details style="margin-bottom:0">
 
-<summary>Social Metrics By Industry Part Deux</summary>
+<summary>Social Metrics By Industry Part Two</summary>
 
 `r t_soc2`
 
