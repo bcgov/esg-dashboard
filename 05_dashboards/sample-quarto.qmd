@@ -29,8 +29,8 @@ format:
 
 ```{r data}
 source("../01_data/sample_data.R")
-source("../04_scripts/tables.R")
-source("../04_scripts/plots.R")
+source("../04_scripts/sample_tables.R")
+source("../04_scripts/sample_plots.R")
 ```
 
 # Reactable
