@@ -1,0 +1,202 @@
+---
+title: "[ESG Centre of Excellence](https://www.esgbc.ca) Dashboard"
+execute: 
+  echo: false
+format:
+   dashboard:
+     logo: ../02_images/BCID_V_rgb_rev.png
+     nav-buttons:
+        icon: github
+        href: https://github.com/bcgov-c/esg-dashboard
+     self-contained: true
+     css: ../03_styles/styles.css
+---
+
+```{r license}
+# Copyright 2024 Province of British Columbia
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and limitations under the License.
+```
+
+```{r data}
+source("../04_scripts/tables.R")
+```
+
+# Summary
+
+##  {.sidebar width="18%"}
+
+### Information
+
+This dashboard provides a variety of metrics that can be used for benchmarking. 
+
+To see metrics for a specific industry, collapse the Summary card and expand either the Environmental or Social Metrics by Industry cards. Navigate to your industry of choice and click on it to expand and see what metrics are available for that industry. 
+
+To see the values of a specific metric across multiple industries, click on the Expand/collapse all button to expand the full table. Then use the boxes at the top to filter the table.
+
+Data sources and further information on the metrics are available in the About tab.
+
+
+## Column {width="82%"}
+
+### Row
+
+<details style="margin-bottom:0" open>
+
+<summary>Summary</summary>
+
+`r t_total`
+
+</details>
+
+### Row
+
+<details style="margin-bottom:0">
+
+<summary>Environmental Metrics By Industry</summary>
+
+`r t_env`
+
+</details>
+
+### Row
+
+<details style="margin-bottom:0">
+
+<summary>Social Metrics By Industry</summary>
+
+`r htmltools::knit_print.html(t_soc)`
+
+</details>
+
+# About {scrolling="true"}
+
+[Data Sources and notes]{.h3 style="margin-top:0"}
+
+::: card
+[Energy use per employee (gigajoules/employee)]{.h5}
+
+**Sources:**
+
+-   Natural Resources Canada. [Industrial sector -- Aggregated industries: British Columbia and territories, Table 2: Secondary energy use and GHG emissions by industry](https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/showTable.cfm?type=CP&sector=agg&juris=bct&year=2021&rn=2&page=0)
+
+-   Natural Resources Canada. [Agriculture Sector -- Aggregated industries: British Columbia and territories, Table 11: Secondary Energy Use and GHG Emissions by End-Use and Energy Source – Excluding Electricity-Related Emissions](https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/showTable.cfm?type=CP&sector=agr&juris=bct&year=2021&rn=1&page=0)
+
+-   Statistics Canada. [Table 14-10-0023-01 Labour force characteristics by industry, annual (x 1,000)](https://doi.org/10.25318/1410002301-eng)
+
+**Notes:**
+
+-   Energy use per employee is calculated by dividing the industry's energy use by the total employment for that industry.
+-   The energy use data is for "B.C. and Territories" whereas labour force data by industry is for B.C. only
+:::
+
+::: card
+[GHG emissions excluding electricity per employee (t of CO2e/employee)]{.h5}
+
+**Sources:**
+
+-   Natural Resources Canada. [Industrial sector -- Aggregated industries: British Columbia and territories, Table 2: Secondary energy use and GHG emissions by industry](https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/showTable.cfm?type=CP&sector=agg&juris=bct&year=2021&rn=2&page=0)
+
+-   Natural Resources Canada. [Agriculture Sector -- Aggregated industries: British Columbia and territories, Table 11: Secondary Energy Use and GHG Emissions by End-Use and Energy Source – Excluding Electricity-Related Emissions](https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/showTable.cfm?type=CP&sector=agr&juris=bct&year=2021&rn=1&page=0)
+
+-   Statistics Canada. [Table 14-10-0023-01 Labour force characteristics by industry, annual (x 1,000)](https://doi.org/10.25318/1410002301-eng)
+
+**Notes:**
+
+-   GHG emissions per employee is calculated by dividing the industry's GHG emissions use by the total employment for that industry.
+-   GHG emissions data is for "B.C. and Territories" whereas labour force data by industry is for B.C. only
+:::
+
+::: card
+[Diverted waste as a % of total non-hazardous waste]{.h5}
+
+**Sources:**
+
+-   Statistics Canada. [Table 38-10-0138-01 Waste materials diverted, by type and by source](https://doi.org/10.25318/3810013801-eng)
+
+-   Statistics Canada. [Table 38-10-0032-01 Disposal of waste, by source](https://doi.org/10.25318/3810003201-eng)
+
+**Note:**
+
+-   Diverted waste as a % of total non-hazardous waste is calculated by dividing tonnes of all diverted material from all sources by all sources of waste disposal.
+:::
+
+::: card
+[Non-residential waste as % of total non-hazardous waste]{.h5}
+
+**Source:**
+
+-   Statistics Canada. [Table 38-10-0032-01 Disposal of waste, by source](https://doi.org/10.25318/3810003201-eng)
+:::
+
+::: card
+[Percentage of employees working full-time]{.h5}
+
+**Source:**
+
+-   Statistics Canada. [Table 14-10-0023-01 Labour force characteristics by industry, annual (x 1,000)](https://doi.org/10.25318/1410002301-eng)
+:::
+
+::: card
+[Employment by age group]{.h5}
+
+**Source:**
+
+-   Statistics Canada. [Table 14-10-0023-01 Labour force characteristics by industry, annual (x 1,000)](https://doi.org/10.25318/1410002301-eng)
+:::
+
+::: card
+[Representation of women on boards of directors]{.h5}
+
+**Source:**
+
+-   Statistics Canada. [Table 33-10-0501-01 Representation of women and men on boards of directors and in officer positions, by firm attributes](https://doi.org/10.25318/3310050101-eng)
+:::
+
+::: card
+[Percentage of employees with disabilities within workforce]{.h5}
+
+**Source:**
+
+-   Statistics Canada. [Table 13-10-0757-01 Industry of employment for persons with and without disabilities aged 25 to 64 years, by sex](https://doi.org/10.25318/1310075701-eng)
+:::
+
+::: card
+[Percentage of employees with union coverage]{.h5}
+
+**Source:**
+
+-   Statistics Canada. [Table 14-10-0069-01 Union coverage by industry, monthly, unadjusted for seasonality (x 1,000)](https://doi.org/10.25318/1410006901-eng)
+:::
+
+::: card
+[Mean hourly pay gap, Canada]{.h5}
+
+**Source:**
+
+-   Statistics Canada. [Table 14-10-0063-01 Employee wages by industry, monthly, unadjusted for seasonality](https://doi.org/10.25318/1410006301-eng)
+:::
+
+::: card
+[Mean hourly pay gap]{.h5}
+
+**Source:**
+
+-   Statistics Canada. [Table 14-10-0063-01 Employee wages by industry, monthly, unadjusted for seasonality](https://doi.org/10.25318/1410006301-eng)
+:::
+
+::: card
+[Mean weekly overtime hours of all employees]{.h5}
+
+**Source:**
+
+-   Statistics Canada. [Table 14-10-0076-01 Employees working overtime (weekly) by industry, annual](https://doi.org/10.25318/1410007601-eng)
+:::
