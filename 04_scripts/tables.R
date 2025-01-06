@@ -27,12 +27,12 @@ t_total <- reactable(total_outer,
                      # add desired functionality
                      compact = TRUE, highlight = TRUE, pagination = FALSE, onClick = "expand", 
                      ## default column formatting
-                     defaultColDef = colDef(html = TRUE),
+                  #   defaultColDef = colDef(html = TRUE), ## this makes the nested tables not work
                      # Special column formatting
                      columns = list(
                        # set widths
                        Category = colDef(minWidth = 100),
-                       Metric = colDef(minWidth = 250),
+                       Metric = colDef(minWidth = 250, html = TRUE),
                        Industry = colDef(minWidth = 125),
                        Value = colDef(minWidth = 75),
                        Unit = colDef(minWidth = 50, html = TRUE),
@@ -121,11 +121,12 @@ t_soc <- htmltools::tagList(
               # add desired functionality
               compact = TRUE, highlight = TRUE, pagination = FALSE, onClick = "expand", filterable = TRUE,
               ## default column formatting
-              defaultColDef = colDef(html = TRUE),
+             # defaultColDef = colDef(html = TRUE),
               # Special column formatting
               columns = list(
                 # set widths
                 Industry = colDef(minWidth = 250,
+                                  html = TRUE,
                                   grouped = JS("function(cellInfo) {
                                                  const cellValue = cellInfo.value;
                                                  if (cellValue === 'Energy') {
@@ -134,9 +135,9 @@ t_soc <- htmltools::tagList(
                                                  }
                                                  return cellValue;
                                                 }")),
-                Metric = colDef(minWidth = 250),
+                Metric = colDef(minWidth = 250, html = TRUE),
                 Value = colDef(minWidth = 50),
-                Unit = colDef(minWidth = 50),
+                Unit = colDef(minWidth = 50, html = TRUE),
                 Year = colDef(minWidth = 50),
                 Region = colDef(minWidth = 100),
                 Age = colDef(show = FALSE),
