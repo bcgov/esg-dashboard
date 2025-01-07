@@ -88,7 +88,7 @@ t_env <- htmltools::browsable(
               # Special column formatting
               columns = list(
                 # set widths
-                Industry = colDef(minWidth = 250, grouped = JS("function(cellInfo) { return cellInfo.value }")),
+                Industry = colDef(minWidth = 250),
                 Metric = colDef(minWidth = 250),
                 Value = colDef(minWidth = 50),
                 Unit = colDef(minWidth = 50, html = TRUE),
@@ -131,9 +131,9 @@ t_soc <- htmltools::tagList(
                                                  const cellValue = cellInfo.value;
                                                  if (cellValue === 'Energy') {
                                                    const tooltip = `This combines the North American Industry Classification System (NAICS) codes 211, 212, 213 and 324.`;
-                                                   return `<span class='tooltip-cell' style='text-decoration: underline; text-decoration-style: dotted; cursor: help' data-tippy-content='${tooltip}'>${cellValue}</span>`;
+                                                   return `<span class='tooltip-cell' style='text-decoration: underline; text-decoration-style: dotted; cursor: help' data-tippy-content='${tooltip}'>${cellInfo.value + ' (' + cellInfo.subRows.length + ')'}</span>`;
                                                  }
-                                                 return cellValue;
+                                                 return cellInfo.value + ' (' + cellInfo.subRows.length + ')';
                                                 }")),
                 Metric = colDef(minWidth = 250, html = TRUE),
                 Value = colDef(minWidth = 50),

@@ -9,6 +9,7 @@ format:
         icon: github
         href: https://github.com/bcgov-c/esg-dashboard
      self-contained: true
+     scrolling: true
      css: ../03_styles/styles.css
 ---
 
@@ -57,6 +58,23 @@ Data sources and further information on the metrics are available in the About t
 
 </details>
 
+# Environment
+
+##  {.sidebar width="18%"}
+
+### Information
+
+This dashboard provides a variety of metrics that can be used for benchmarking. 
+
+To see metrics for a specific industry, collapse the Summary card and expand either the Environmental or Social Metrics by Industry cards. Navigate to your industry of choice and click on it to expand and see what metrics are available for that industry. 
+
+To see the values of a specific metric across multiple industries, click on the Expand/collapse all button to expand the full table. Then use the boxes at the top to filter the table.
+
+Data sources and further information on the metrics are available in the About tab.
+
+
+## Column {width="82%"}
+
 ### Row
 
 <details style="margin-bottom:0">
@@ -67,15 +85,26 @@ Data sources and further information on the metrics are available in the About t
 
 </details>
 
-### Row
+# Social
 
-<details style="margin-bottom:0">
+##  {.sidebar width="18%"}
 
-<summary>Social Metrics By Industry</summary>
+### Information
 
-`r htmltools::knit_print.html(t_soc)`
+This dashboard provides a variety of metrics that can be used for benchmarking. 
 
-</details>
+To see metrics for a specific industry, collapse the Summary card and expand either the Environmental or Social Metrics by Industry cards. Navigate to your industry of choice and click on it to expand and see what metrics are available for that industry. 
+
+To see the values of a specific metric across multiple industries, click on the Expand/collapse all button to expand the full table. Then use the boxes at the top to filter the table.
+
+Data sources and further information on the metrics are available in the About tab.
+
+
+## Column {width="82%"}
+
+```{r}
+htmltools::knit_print.html(t_soc)
+```
 
 # About {scrolling="true"}
 
