@@ -48,4 +48,8 @@ nav.navbar {
   color:#fff;
 }
 
-
+/*input filter placeholder text*/
+input::placeholder {
+  opacity:1;
+  color: black;
+}
