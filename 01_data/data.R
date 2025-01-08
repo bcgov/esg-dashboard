@@ -173,10 +173,6 @@ labour_NAICS = c("[111-112, 1100, 1151-1152]","[113, 1153]",
                  "[61]", "[62]", 
                  "[72]", "[81]", "[91]")
 
-# labour_NAICS_hierarchy <- c("1", "1.2.3", "1.2.4.5", "1.2.4.7", "1.2.8", "1.2.9", "1.2.10",
-#            "1.13.14", "1.13.17", "1.13.18", "1.13.21", "1.13.22", "1.13.23",
-#            "1.13.24", "1.13.25", "1.13.26", "1.13.27", "1.13.28")
-
 ## 1. Percent of employees working full-time ----
 soc1 <- labour %>%
   filter(GEO == "British Columbia") %>%
@@ -322,7 +318,6 @@ soc8 <- pay %>%
          Industry = case_when(Industry == "Total employees, all industries" ~ "Total, all industries",
                               TRUE ~ str_remove_all(Industry, "\\s\\[([:digit:]|-|,|\\s)+\\]")))
 
-
 ## 10. Mean weekly overtime paid hours by gender ----
 soc10 <- overtime %>%
   filter(REF_DATE >= 2000, GEO == "British Columbia") %>%
@@ -362,44 +357,15 @@ format_for_tables <- function(data) {
 table_data <- map_dfr(list(env1, env4, env7, env8, soc1, soc2, soc3, soc4, soc5, soc7, soc8, soc10), format_for_tables)
 
 ## Order industries
-
-industry_order <-  tibble::tribble(
-            ~Industry_Order,                                                  ~Industry,
-                         1L,                "Total, industrial and agriculture sectors",
-                         2L,                                    "Total, all industries",
-                         3L,               "Agriculture, forestry, fishing and hunting",
-                         4L,                                              "Agriculture",
-                         5L,                                                 "Forestry",
-                         6L, "Forestry and logging and support activities for forestry",
-                         7L,        "Forestry, fishing, mining, quarrying, oil and gas",
-                         8L,            "Mining, quarrying, and oil and gas extraction",
-                         9L,                                                   "Energy",
-                        10L,                                                "Utilities",
-                        11L,                                             "Construction",
-                        12L,                                            "Manufacturing",
-                        13L,                               "Wholesale and retail trade",
-                        14L,                           "Transportation and warehousing",
-                        15L,      "Finance, insurance, real estate, rental and leasing",
-                        16L,                                    "Finance and insurance",
-                        17L,          "Professional, scientific and technical services",
-                        18L,            "Business, building and other support services",
-                        19L,                  "Management of companies and enterprises",
-                        20L,                                     "Educational services",
-                        21L,                        "Health care and social assistance",
-                        22L,                      "Information, culture and recreation",
-                        23L,                          "Accommodation and food services",
-                        24L,            "Other services (except public administration)",
-                        25L,                                    "Public administration",
-                        26L,                                           "Other industry",
-                        27L,                                    "Unclassified industry"
-                     )
+industry_order <- read_csv("01_data/industry_order.csv")
 
 table_data <- table_data %>% 
   left_join(industry_order, by = "Industry") %>%
   arrange(Category, Industry_Order) %>%
-  mutate(Industry = fct_inorder(Industry)) %>%
-  select(-Industry_Order)
+  mutate(Industry = fct_inorder(Industry))
 
 saveRDS(table_data, "01_data/table_data.rds")
+
+
 
 
