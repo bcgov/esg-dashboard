@@ -18,7 +18,7 @@ library(tippy)
 table_data <- readRDS("../01_data/table_data.rds")
 
 ## Summary: Total ----
-total_data <- table_data %>% filter(str_detect(Industry, "Total"))
+total_data <- table_data %>% filter(str_detect(Industry, "Total")) %>% select(-Industry_Order)
 total_outer <- total_data %>% filter((is.na(Age) | Age == "15 years and over") & (is.na(Gender) | Gender == "Both genders"))
 total_age <- total_data %>% filter(!is.na(Age) & Age != "15 years and over")
 total_gender <- total_data %>% filter(!is.na(Gender) & Gender != "Both genders")
@@ -70,71 +70,139 @@ t_total <- reactable(total_outer,
 ## Summary: Environmental ----
 env_data <- table_data %>% 
   filter(!str_detect(Industry, "Total") & Category == "Environmental") %>%
-  select(-Category, -Age, -Gender)
+  select(Industry_Order, Industry, Metric, Value, Unit, Year, Region) %>%
+  ## create a label variable for the "filter metric" select input as option tags cannot have html tags in them
+  mutate(select_label = str_remove_all(Metric, "</?sub>"))
 
-t_env <- htmltools::browsable(
+t_env <- browsable( ## make objects render as HTML by default when printed at the console
   tagList(
-    tags$button(
-      class = "bcds-react-aria-Button",
-      "Expand/collapse all",
-      onclick = "Reactable.toggleAllRowsExpanded('expansion-table-env')"
-    ),
+    tags$span( ## use span as it is a container for in-line content
+      style="display:flex; flex-direction:row; flex-wrap:wrap;", ## use flex-box layout to handle changes in screen size
+      tags$span( ## new span container for label and input to prevent wrapping on screen changes
+        style= "display:flex; flex-direction:row; flex-wrap:nowrap; align-items: baseline;",
+        # custom Industry search
+        tags$label("Filter Industries:", `for` = "industry-search"),
+        tags$input(
+          id = "industry-search",
+          placeholder = "All industries",
+          type = "text",
+          style = "padding: 0.25rem 0.5rem; margin: 0.5rem; border:solid 0.85px;",
+          oninput = "Reactable.setSearch('expansion-table-env', this.value)"
+          )),
+      
+      # custom Metric filter
+      tags$span(
+        style= "display:flex; flex-direction:row; flex-wrap:nowrap; align-items: baseline;",
+        tags$label("Filter Metrics:", `for` = "metric-filter"),
+        tags$select(
+          id = "metric-filter",
+          style = "padding: 0.3rem 0.5rem; margin:0.5rem; border:solid 0.85px;width:50%",
+          onchange = "Reactable.setFilter('expansion-table-env', 'Metric', this.value)",
+          tags$option("All metrics", value = ""),
+          map2(unique(env_data$Metric), unique(env_data$select_label), ~tags$option(.y, value = .x))
+          ))),
     
-    reactable(env_data, groupBy = "Industry", elementId = "expansion-table-env",
+    tags$span(
+      # expand/ collapse all button
+      tags$button(
+        "Expand/collapse all",
+        class = "bcds-react-aria-Button",
+        onclick = "Reactable.toggleAllRowsExpanded('expansion-table-env')"),
+      
+      # download button
+      tags$button(
+        "Download table as CSV",
+        class = "bcds-react-aria-Button",
+        onclick = "Reactable.downloadDataCSV('expansion-table-env', 'environmental_metrics_summary.csv')"
+        )),
+    
+    # table
+    reactable(env_data, groupBy = "Industry_Order", elementId = "expansion-table-env",
               # add desired functionality
-              compact = TRUE, highlight = TRUE, pagination = FALSE, onClick = "expand", filterable = TRUE,
-              ## default column formatting
-              defaultColDef = colDef(html = TRUE),
+              compact = TRUE, highlight = TRUE, pagination = FALSE, onClick = "expand",
               # Special column formatting
               columns = list(
                 # set widths
-                Industry = colDef(minWidth = 250),
-                Metric = colDef(minWidth = 250),
+                Industry_Order = colDef(header = "",
+                                        maxWidth = 55,
+                                        align = "right",
+                                        # display only the number of nested rows (i.e., metrics)
+                                        grouped = JS("function(cellInfo) { return '(' + cellInfo.subRows.length + ')' }")),
+                Industry = colDef(minWidth = 250,
+                                  # create "aggregate" value of industry to display in the collapsed table
+                                  aggregate = "unique"),
+                Metric = colDef(minWidth = 250, html = TRUE),
                 Value = colDef(minWidth = 50),
                 Unit = colDef(minWidth = 50, html = TRUE),
                 Year = colDef(minWidth = 50),
-                Region = colDef(minWidth = 100)))
+                Region = colDef(minWidth = 100),
+                select_label = colDef(show = FALSE)))
     ))
     
 ## Summary: Social ----
-soc_data <- table_data %>% filter(!str_detect(Industry, "Total") & Category == "Social") %>% select(-Category)
+soc_data <- table_data %>% filter(!str_detect(Industry, "Total") & Category == "Social") %>% select(Industry_Order, Industry, Metric, everything(), -Category) 
 soc_outer <- soc_data %>% filter((is.na(Age) | Age == "15 years and over") & (is.na(Gender) | Gender == "Both genders"))
 soc_age <- soc_data %>% filter(!is.na(Age) & Age != "15 years and over")
 soc_gender <- soc_data %>% filter(!is.na(Gender) & Gender != "Both genders")
 
-## tooltip function for non-grouped cells
-# See the ?tippy documentation to learn how to customize tooltips
-with_tooltip <- function(value, tooltip, ...) {
-  div(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
-      tippy(value, tooltip, ...))
-}
-
-t_soc <- htmltools::tagList(
-    tags$script(HTML("document.addEventListener('DOMContentLoaded', function() {
-                        tippy('.tooltip-cell');
-                      });")),
+t_soc <- browsable( ## make objects render as HTML by default when printed at the console
+  tagList(
+    tags$span(
+      style="display:flex; flex-direction:row; flex-wrap:wrap;",
+    tags$span(
+      style= "display:flex; flex-direction:row; flex-wrap:nowrap; align-items: baseline;",
+    # custom Industry search
+      tags$label("Filter Industries:", `for` = "industry-search"),
+      tags$input(
+        id = "industry-search",
+        placeholder = "All industries",
+        type = "text",
+        style = "padding: 0.25rem 0.5rem; margin: 0.5rem; border:solid 0.85px;",
+        oninput = "Reactable.setSearch('expansion-table-soc', this.value)"
+    )),
+    
+    # custom Metric filter
+    tags$span(
+      style= "display:flex; flex-direction:row; flex-wrap:nowrap; align-items: baseline;",
+      tags$label("Filter Metrics:", `for` = "metric-filter"),
+      tags$select(
+        id = "metric-filter",
+        style = "padding: 0.3rem 0.5rem; margin:0.5rem; border:solid 0.85px;width:50%",
+        onchange = "Reactable.setFilter('expansion-table-soc', 'Metric', this.value)",
+        tags$option("All metrics", value = ""),
+        lapply(unique(soc_outer$Metric), tags$option)
+        ))),
+    
+    tags$span(
+    # expand/ collapse all button
     tags$button(
       "Expand/collapse all",
       class = "bcds-react-aria-Button",
       onclick = "Reactable.toggleAllRowsExpanded('expansion-table-soc')"),
-    reactable(soc_outer, groupBy = "Industry", elementId = "expansion-table-soc",
+    
+    # download button
+    tags$button(
+      "Download table as CSV",
+      class = "bcds-react-aria-Button",
+      onclick = "Reactable.downloadDataCSV('expansion-table-soc', 'social_metrics_summary.csv')"
+    )),
+    
+    # table
+    reactable(soc_outer, groupBy = "Industry_Order", elementId = "expansion-table-soc",
               # add desired functionality
-              compact = TRUE, highlight = TRUE, pagination = FALSE, onClick = "expand", filterable = TRUE,
-              ## default column formatting
-             # defaultColDef = colDef(html = TRUE),
+              compact = TRUE, highlight = TRUE, pagination = FALSE, onClick = "expand",
               # Special column formatting
               columns = list(
                 # set widths
+                Industry_Order = colDef(header = "",
+                                        maxWidth = 55,
+                                        align = "right",
+                                        # display only the number of nested rows (i.e., metrics)
+                                        grouped = JS("function(cellInfo) { return '(' + cellInfo.subRows.length + ')' }")),
                 Industry = colDef(minWidth = 250,
                                   html = TRUE,
-                                  grouped = JS("function(cellInfo) {
-                                                 const cellValue = cellInfo.value;
-                                                 if (cellValue === 'Energy') {
-                                                   const tooltip = `This combines the North American Industry Classification System (NAICS) codes 211, 212, 213 and 324.`;
-                                                   return `<span class='tooltip-cell' style='text-decoration: underline; text-decoration-style: dotted; cursor: help' data-tippy-content='${tooltip}'>${cellInfo.value + ' (' + cellInfo.subRows.length + ')'}</span>`;
-                                                 }
-                                                 return cellInfo.value + ' (' + cellInfo.subRows.length + ')';
-                                                }")),
+                                  # create "aggregate" value of industry to display in the collapsed table
+                                  aggregate = "unique"),
                 Metric = colDef(minWidth = 250, html = TRUE),
                 Value = colDef(minWidth = 50),
                 Unit = colDef(minWidth = 50, html = TRUE),
@@ -143,7 +211,9 @@ t_soc <- htmltools::tagList(
                 Age = colDef(show = FALSE),
                 Gender = colDef(show = FALSE)),
               # expandable details
-              details = function(index) {
+              details = colDef(
+                width = 20,
+                details = function(index) {
                 # Employment by age table
                 t_age <- soc_age %>%
                   filter(Industry == soc_outer$Industry[index]) %>%
@@ -158,148 +228,11 @@ t_soc <- htmltools::tagList(
                 
                 ## show nested table only for employment by age
                 if(soc_outer$Metric[index] == "Employment by age group") {
-                  ## wrap table in div to add padding
-                  htmltools::div(style = "padding-left: 2rem",
-                                 reactable(t_age, outlined = TRUE)
-                  )
+                  reactable(t_age, outlined = TRUE)
+                  
                 ## show nested table only for overtime
                 } else if(soc_outer$Metric[index] == "Mean weekly overtime hours of all employees"){
-                  ## wrap table in div to add padding
-                  htmltools::div(style = "padding-left: 2rem",
-                                 reactable(t_gender, outlined = TRUE)
-                  )
+                  reactable(t_gender, outlined = TRUE)
                 }
-              }))
-
-
-
-# 
-# ## event listener for tooltips to work
-# tags$script(HTML("
-# document.addEventListener('DOMContentLoaded', function() {
-#   tippy('.tooltip-cell');
-# });
-# "))
-
-# ## create tooltips for the table
-# tooltip_soc_industry <- "
-# function(cellInfo) {
-#   const cellValue = cellInfo.value;
-#   if (cellValue === 'Energy') {
-#     const tooltip = `This combines the North American Industry Classification System (NAICS) codes 211, 212, 213 and 324.`;
-#     return `<span class='tooltip-cell' style='text-decoration: underline; text-decoration-style: dotted; cursor: help' data-tippy-content='${tooltip}'>${cellValue}</span>`;
-#   }
-#   return cellValue;
-# }
-# "
-# t_soc <- htmltools::browsable(
-#   tagList(
-#     tags$button(
-#       class = "bcds-react-aria-Button",
-#       "Expand/collapse all",
-#       onclick = "Reactable.toggleAllRowsExpanded('expansion-table-soc')"
-#     ),
-# 
-#     reactable(soc_outer, groupBy = "Industry", elementId = "expansion-table-soc",
-#               # add desired functionality
-#               compact = TRUE, highlight = TRUE, pagination = FALSE, onClick = "expand", filterable = TRUE,
-#               # Special column formatting
-#               columns = list(
-#                 # set widths
-#                 Industry = colDef(minWidth = 250,
-#                                   grouped = JS(tooltip_soc_industry)),
-#                 Metric = colDef(minWidth = 250,
-#                                 cell = function(value){
-#                                   if(value == "Employment by age")
-#                                     with_tooltip(value, "Miles per US gallon")
-#                                   else
-#                                     value
-#                                   }),
-#                 Value = colDef(minWidth = 50),
-#                 Unit = colDef(minWidth = 50, html = TRUE),
-#                 Year = colDef(minWidth = 50),
-#                 Region = colDef(minWidth = 100),
-#                 Age = colDef(show = FALSE),
-#                 Gender = colDef(show = FALSE)),
-#               # expandable details
-#               details = function(index) {
-#                 # Employment by age table
-#                 t_age <- soc_age %>%
-#                   filter(Industry == soc_outer$Industry[index]) %>%
-#                   filter(Metric == soc_outer$Metric[index]) %>%
-#                   select(Age, Value, Unit)
-# 
-#                 # Average overtime hours of all employees table
-#                 t_gender <- soc_gender %>%
-#                   filter(Industry == soc_outer$Industry[index]) %>%
-#                   filter(Metric == soc_outer$Metric[index]) %>%
-#                   select(Gender, Value, Unit)
-# 
-#                 ## show nested table only for employment by age
-#                 if(soc_outer$Metric[index] == "Employment by age") {
-#                   ## wrap table in div to add padding
-#                   htmltools::div(style = "padding-left: 2rem",
-#                                  reactable(t_age, outlined = TRUE)
-#                   )
-#                 } else if(soc_outer$Metric[index] == "Average overtime hours of all employees"){
-#                   ## wrap table in div to add padding
-#                   htmltools::div(style = "padding-left: 2rem",
-#                                  reactable(t_gender, outlined = TRUE)
-#                   )
-#                   }
-#                 })
-#   ))
-
-
-# 
-# 
-# 
-# 
-# data_outer <- tab1 %>% filter(Age == "15 years and over") %>% filter(Industry != "Total, all industries") %>% select(-Category)
-# data_inner <- tab1 %>% filter(Age != "15 years and over") %>% filter(Industry != "Total, all industries") %>% select(-Category)
-# 
-# ## wrap reactable table in htmltools::browsable to add "expand all" button
-# t_soc <- htmltools::browsable(
-#   tagList(
-#     tags$button(
-#       class = "bcds-react-aria-Button",
-#       "Expand/collapse all",
-#       onclick = "Reactable.toggleAllRowsExpanded('expansion-table-soc')"
-#     ),
-#     
-#     reactable(data_outer, groupBy = "Industry", elementId = "expansion-table-soc",
-#               # add desired functionality
-#               compact = TRUE, highlight = TRUE, pagination = FALSE, filterable = TRUE, onClick = "expand", 
-#               # Special column formatting
-#               columns = list(
-#                 # Render grouped cells without the row count
-#                 Industry = colDef(grouped = JS("function(cellInfo) { return cellInfo.value }"), minWidth = 250),
-#                 Metric = colDef(minWidth = 250),
-#                 Value = colDef(minWidth = 50),
-#                 Unit = colDef(minWidth = 50),
-#                 Year = colDef(minWidth = 50),
-#                 Region = colDef(minWidth = 100),
-#                 # Hide age column (display in nested table only)
-#                 Age = colDef(show = FALSE)),
-#               # add nested table for ages
-#               details = function(index) {
-#                 data_inner <- data_inner %>% 
-#                   filter(Metric == data_outer$Metric[index] &
-#                            Industry == data_outer$Industry[index]) %>%
-#                   select(Age, Value, Unit)
-#                 ## show nested table only for employment by Age
-#                 if(data_outer$Metric[index] == "Percent of Employment by Age")
-#                   ## wrap table in div to add padding
-#                   htmltools::div(style = "padding-left: 2rem",
-#                                  reactable(data_inner, outlined = TRUE, width = "440px")
-#                   )
-#               })
-#   )
-# )
-# 
-# # htmltools::div(style = "padding: 1rem",
-# #                reactable(plant_data, outlined = TRUE)
-# # )
-# 
-
+              }))))
 
