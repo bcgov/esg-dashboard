@@ -47,15 +47,9 @@ Data sources and further information on the metrics are available in the About t
 
 ## Column {width="82%"}
 
-### Row
-
-<details style="margin-bottom:0" open>
-
-<summary>Summary</summary>
-
-`r t_total`
-
-</details>
+```{r}
+t_total
+```
 
 # Environment
 
@@ -109,14 +103,14 @@ Data sources and further information on the metrics are available in the About t
 
 <summary>Social Metrics By Industry</summary>
 
-`r t_soc`
+`r htmltools::knit_print.html(t_soc)`
 
 </details>
 
 
 # About {scrolling="true"}
 
-[Data Sources and notes]{.h3 style="margin-top:0"}
+[Data sources and notes]{.h3 style="margin-top:0"}
 
 ::: {.card title="Energy use per employee (gigajoules/employee)" fill="false"}
 **Sources:**
