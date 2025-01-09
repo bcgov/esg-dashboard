@@ -16,6 +16,7 @@ library(htmltools)
 library(tippy)
 
 table_data <- readRDS("../01_data/table_data.rds")
+tooltip_text <- read_csv("../01_data/tooltip_text.csv")
 
 ## Summary: Total ----
 total_data <- table_data %>% filter(str_detect(Industry, "Total")) %>% select(-Industry_Order)
@@ -145,6 +146,9 @@ soc_outer <- soc_data %>% filter((is.na(Age) | Age == "15 years and over") & (is
 soc_age <- soc_data %>% filter(!is.na(Age) & Age != "15 years and over")
 soc_gender <- soc_data %>% filter(!is.na(Gender) & Gender != "Both genders")
 
+## add tooltip text
+soc_outer <- soc_outer %>% left_join(tooltip_text, by = "Industry")
+
 t_soc <- browsable( ## make objects render as HTML by default when printed at the console
   tagList(
     tags$span(
@@ -178,7 +182,8 @@ t_soc <- browsable( ## make objects render as HTML by default when printed at th
     tags$button(
       "Expand/collapse all",
       class = "bcds-react-aria-Button",
-      onclick = "Reactable.toggleAllRowsExpanded('expansion-table-soc')"),
+      ## include tippy function call to enable tooltips for the expanded table
+      onclick = "Reactable.toggleAllRowsExpanded('expansion-table-soc'); tippy('.tooltip-cell')"),
     
     # download button
     tags$button(
@@ -202,14 +207,30 @@ t_soc <- browsable( ## make objects render as HTML by default when printed at th
                 Industry = colDef(minWidth = 250,
                                   html = TRUE,
                                   # create "aggregate" value of industry to display in the collapsed table
-                                  aggregate = "unique"),
+                                  aggregate = "unique",
+                                  ## add tooltips to the aggregated values only
+                                  ## use tippy function call to enable tooltips
+                                  ## if there is no tooltip in the Definition column, return the regualar value
+                                  ## otherwise return a stylized span around the regular value, with data-tippy-content equal to the Definition value
+                                  aggregated =  JS("function(cellInfo){
+                                    tippy('.tooltip-cell')
+                                    if(cellInfo.row.Definition.length === 0){
+                                      return cellInfo.value
+                                    }
+                                    return `<span class='tooltip-cell' 
+                                                  style='text-decoration: underline; text-decoration-style: dotted; cursor: help' 
+                                                  data-tippy-content='${cellInfo.row.Definition}'>
+                                                  ${cellInfo.value}
+                                                  </span>`
+                                               }")),
                 Metric = colDef(minWidth = 250, html = TRUE),
                 Value = colDef(minWidth = 50),
                 Unit = colDef(minWidth = 50, html = TRUE),
                 Year = colDef(minWidth = 50),
                 Region = colDef(minWidth = 100),
                 Age = colDef(show = FALSE),
-                Gender = colDef(show = FALSE)),
+                Gender = colDef(show = FALSE),
+                Definition = colDef(aggregate = "unique", show = FALSE)),
               # expandable details
               details = colDef(
                 width = 20,
