@@ -20,9 +20,10 @@ tooltip_text <- read_csv("../01_data/tooltip_text.csv")
 
 ## Summary: Total ----
 total_data <- table_data %>% filter(str_detect(Industry, "Total")) %>% select(-Industry_Order)
-total_outer <- total_data %>% filter((is.na(Age) | Age == "15 years and over") & (is.na(Gender) | Gender == "Both genders"))
+total_outer <- total_data %>% filter((is.na(Age) | Age == "15 years and over") & (is.na(Gender) | Gender == "Both genders") & (is.na(`Hourly wages`) | str_detect(`Hourly wages`, "Total")))
 total_age <- total_data %>% filter(!is.na(Age) & Age != "15 years and over")
 total_gender <- total_data %>% filter(!is.na(Gender) & Gender != "Both genders")
+total_wages <- total_data %>% filter(!is.na(`Hourly wages`) & !str_detect(`Hourly wages`, "Total"))
 
 t_total <- reactable(total_outer,
                      # add desired functionality
@@ -40,7 +41,8 @@ t_total <- reactable(total_outer,
                        Year = colDef(minWidth = 50),
                        Region = colDef(minWidth = 100),
                        Age = colDef(show = FALSE),
-                       Gender = colDef(show = FALSE)),
+                       Gender = colDef(show = FALSE),
+                       `Hourly wages` = colDef(show = FALSE)),
                      # expandable details
                      details = function(index) {
                        # Employment by age table
@@ -53,6 +55,11 @@ t_total <- reactable(total_outer,
                          filter(Metric == total_outer$Metric[index]) %>%
                          select(Gender, Value, Unit)
                        
+                       # Representation of women by compensation level
+                       t_wages <- total_wages %>%
+                         filter(Metric == total_outer$Metric[index]) %>%
+                         select(`Hourly wages`, Value, Unit)
+                       
                        ## show nested table only for employment by age
                        if(total_outer$Metric[index] == "Employment by age group") {
                          ## wrap table in div to add padding
@@ -64,6 +71,12 @@ t_total <- reactable(total_outer,
                          ## wrap table in div to add padding
                          htmltools::div(style = "padding-left: 2rem",
                                         reactable(t_gender, outlined = TRUE)
+                         )
+                       ## show nested table only for wages
+                       } else if(total_outer$Metric[index] == "Representation of women by compensation level") {
+                         ## wrap table in div to add padding
+                         htmltools::div(style = "padding-left: 2rem",
+                                        reactable(t_wages, outlined = TRUE)
                          )
                        }
                      })
@@ -82,6 +95,7 @@ t_env <- browsable( ## make objects render as HTML by default when printed at th
       tags$span( ## new span container for label and input to prevent wrapping on screen changes
         style= "display:flex; flex-direction:row; flex-wrap:nowrap; align-items: baseline;",
         # custom Industry search
+        # https://glin.github.io/reactable/articles/examples.html#custom-search-input
         tags$label("Filter Industries:", `for` = "industry-search"),
         tags$input(
           id = "industry-search",
@@ -92,6 +106,7 @@ t_env <- browsable( ## make objects render as HTML by default when printed at th
           )),
       
       # custom Metric filter
+      # https://glin.github.io/reactable/articles/examples.html#custom-column-filter
       tags$span(
         style= "display:flex; flex-direction:row; flex-wrap:nowrap; align-items: baseline;",
         tags$label("Filter Metrics:", `for` = "metric-filter"),
@@ -105,12 +120,14 @@ t_env <- browsable( ## make objects render as HTML by default when printed at th
     
     tags$span(
       # expand/ collapse all button
+      # https://glin.github.io/reactable/articles/examples.html#row-expansion-toggle-button
       tags$button(
         "Expand/collapse all",
         class = "bcds-react-aria-Button",
         onclick = "Reactable.toggleAllRowsExpanded('expansion-table-env')"),
       
       # download button
+      # https://glin.github.io/reactable/articles/examples.html#csv-download-button
       tags$button(
         "Download table as CSV",
         class = "bcds-react-aria-Button",
@@ -142,9 +159,10 @@ t_env <- browsable( ## make objects render as HTML by default when printed at th
     
 ## Summary: Social ----
 soc_data <- table_data %>% filter(!str_detect(Industry, "Total") & Category == "Social") %>% select(Industry_Order, Industry, Metric, everything(), -Category) 
-soc_outer <- soc_data %>% filter((is.na(Age) | Age == "15 years and over") & (is.na(Gender) | Gender == "Both genders"))
+soc_outer <- soc_data %>% filter((is.na(Age) | Age == "15 years and over") & (is.na(Gender) | Gender == "Both genders") & (is.na(`Hourly wages`) | str_detect(`Hourly wages`, "Total")))
 soc_age <- soc_data %>% filter(!is.na(Age) & Age != "15 years and over")
 soc_gender <- soc_data %>% filter(!is.na(Gender) & Gender != "Both genders")
+soc_wages <- soc_data %>% filter(!is.na(`Hourly wages`) & !str_detect(`Hourly wages`, "Total"))
 
 ## add tooltip text
 soc_outer <- soc_outer %>% left_join(tooltip_text, by = "Industry")
@@ -210,7 +228,7 @@ t_soc <- browsable( ## make objects render as HTML by default when printed at th
                                   aggregate = "unique",
                                   ## add tooltips to the aggregated values only
                                   ## use tippy function call to enable tooltips
-                                  ## if there is no tooltip in the Definition column, return the regualar value
+                                  ## if there is no tooltip in the Definition column, return the regular value
                                   ## otherwise return a stylized span around the regular value, with data-tippy-content equal to the Definition value
                                   aggregated =  JS("function(cellInfo){
                                     tippy('.tooltip-cell')
@@ -247,6 +265,12 @@ t_soc <- browsable( ## make objects render as HTML by default when printed at th
                   filter(Metric == soc_outer$Metric[index]) %>%
                   select(Gender, Value, Unit)
                 
+                # Representation of women by compensation level
+                t_wages <- soc_wages %>%
+                  filter(Industry == soc_outer$Industry[index]) %>%
+                  filter(Metric == soc_outer$Metric[index]) %>%
+                  select(`Hourly wages`, Value, Unit)
+                
                 ## show nested table only for employment by age
                 if(soc_outer$Metric[index] == "Employment by age group") {
                   reactable(t_age, outlined = TRUE)
@@ -254,6 +278,13 @@ t_soc <- browsable( ## make objects render as HTML by default when printed at th
                 ## show nested table only for overtime
                 } else if(soc_outer$Metric[index] == "Mean weekly overtime hours of all employees"){
                   reactable(t_gender, outlined = TRUE)
+                  
+                  ## show nested table only for wages
+                } else if(soc_outer$Metric[index] == "Representation of women by compensation level") {
+                  ## wrap table in div to add padding
+                  htmltools::div(style = "padding-left: 2rem",
+                                 reactable(t_wages, outlined = TRUE)
+                  )
                 }
               }))))
 
