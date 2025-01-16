@@ -32,14 +32,14 @@ plotly_custom_layout <- function(plot) {
   
   plot %>%
     layout(
-      title = list(x = 0), ## left justified title
+      title = list(x = 0, y = 0.96), ## left justified title
       xaxis = list(tickformat = "d"), ## integers only
       legend = list(orientation = "h"),
       hoverlabel = list(namelength = -1),  ## shows full hover label regardless of length
       dragmode = FALSE,  # remove drag zoom
       modebar = list(remove = list("autoscale","hoverCompareCartesian", "lasso", "pan", 
-                                   "resetscale", "select", "zoom", "zoomin", "zoomout"))#,
-     # margin = list(b = 0)
+                                   "resetscale", "select", "zoom", "zoomin", "zoomout")),
+     margin = list(t = 50)
     )
 }
 
@@ -90,7 +90,7 @@ line_plot <- function(data, Variable) {
           hoverinfo = "text",
           hovertemplate = "%{text}<extra></extra>") %>%
     layout(
-      title = list(text = unique(data$Title)),
+      title = list(text = paste0(unique(data$Title), "<br><span style='font-size:14'>", unique(data$Region), "</span>")),
       xaxis = list(title = ""),
       yaxis = list(title = unique(data$Unit)),
       hovermode = FALSE
@@ -114,7 +114,7 @@ area_plot <- function(data, Variable){
           hovertemplate = "%{text}<extra></extra>") %>%
     layout(
       #legend = list(traceorder = "reversed"),
-      title = list(text = unique(data$Title)),
+      title = list(text = paste0(unique(data$Title), "<br><span style='font-size:14'>", unique(data$Region), "</span>")),
       xaxis = list(title = ""),
       yaxis = list(title = "Share (%)", range = c(0, 100)),
       hovermode = FALSE

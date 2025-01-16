@@ -31,9 +31,10 @@ en_total_ind <- read_csv("01_data/agg_bct_e_2.csv", skip = 10, n_max = 13) %>%
   mutate(Topic = "Energy use",
          Variable = "Industry",
          Metric = "Total",
-         Title = "Total energy use by industry",
+         Title = "Total energy use by industry", 
+         Region = "B.C. and Territories",
          Unit = "Petajoules") %>%
-  select(Topic, Metric, Variable, Title, Group, Year, Value, Unit)
+  select(Topic, Metric, Variable, Title, Region, Group, Year, Value, Unit)
 
 ## Share of energy use by industry ----
 en_share_ind <- bind_rows(
@@ -55,8 +56,9 @@ en_share_ind <- bind_rows(
          Variable = "Industry",
          Metric = "Shares",
          Title = "Share of energy use by industry",
+         Region = "B.C. and Territories",
          Unit = "%") %>%
-  select(Topic, Metric, Variable, Title, Group, Year, Value, Unit)
+  select(Topic, Metric, Variable, Title, Region, Group, Year, Value, Unit)
 
 ## Total energy use by energy source ----
 en_total_source <- bind_rows(
@@ -81,8 +83,9 @@ en_total_source <- bind_rows(
          Variable = "Energy source",
          Metric = "Total",
          Title = "Total energy use by energy source",
+         Region = "B.C. and Territories",
          Unit = "Petajoules") %>%
-  select(Topic, Metric, Variable, Title, Group, Year, Value, Unit)
+  select(Topic, Metric, Variable, Title, Region, Group, Year, Value, Unit)
 
 ## Share of energy use by energy source ----
 en_share_source <- bind_rows(
@@ -114,8 +117,9 @@ en_share_source <- bind_rows(
          Variable = "Energy source",
          Metric = "Shares",
          Title = "Share of energy use by energy source",
+         Region = "B.C. and Territories",
          Unit = "%") %>%
-  select(Topic, Metric, Variable, Title, Group, Year, Value, Unit)
+  select(Topic, Metric, Variable, Title, Region, Group, Year, Value, Unit)
 
 
 # GHG emissions ----
@@ -139,8 +143,9 @@ ghg_total_ind <- bind_rows(
          Variable = "Industry",
          Metric = "Total",
          Title = "Total GHG emissions by industry",
+         Region = "B.C. and Territories",
          Unit = "Mt of CO2e") %>%
-  select(Topic, Metric, Variable, Title, Group, Year, Value, Unit)
+  select(Topic, Metric, Variable, Title, Region, Group, Year, Value, Unit)
 
 ## Share of GHG emissions by industry ----
 ghg_share_ind <- bind_rows(
@@ -162,8 +167,9 @@ ghg_share_ind <- bind_rows(
          Variable = "Industry",
          Metric = "Shares",
          Title = "Share of GHG emissions by industry",
+         Region = "B.C. and Territories",
          Unit = "%") %>%
-  select(Topic, Metric, Variable, Title, Group, Year, Value, Unit)
+  select(Topic, Metric, Variable, Title, Region, Group, Year, Value, Unit)
  
 ## Total GHG emissions by energy source ----
 ghg_total_source <- bind_rows(
@@ -187,8 +193,9 @@ ghg_total_source <- bind_rows(
          Variable = "Energy source",
          Metric = "Total",
          Title = "Total GHG emissions by energy source",
+         Region = "B.C. and Territories",
          Unit = "Mt CO2e") %>%
-  select(Topic, Metric, Variable, Title, Group, Year, Value, Unit)
+  select(Topic, Metric, Variable, Title, Region, Group, Year, Value, Unit)
 
 ## Share of GHG emissions by energy source ----
 ghg_share_source <- bind_rows(
@@ -219,8 +226,9 @@ ghg_share_source <- bind_rows(
          Variable = "Energy source",
          Metric = "Shares",
          Title = "Share of GHG emissions by energy source",
+         Region = "B.C. and Territories",
          Unit = "%") %>%
-  select(Topic, Metric, Variable, Title, Group, Year, Value, Unit)
+  select(Topic, Metric, Variable, Title, Region, Group, Year, Value, Unit)
 
 # combine ----
 bind_rows(
