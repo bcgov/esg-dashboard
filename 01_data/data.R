@@ -23,7 +23,6 @@ library(cansim)
 # union <- get_cansim("1410006901")
 # pay <- get_cansim("1410006301")
 # overtime <- get_cansim("1410007601")
-# absences <- get_cansim("1410019401")
 # compensation_lvl <- get_cansim("1410011301")
 
 # Environmental indicators ----
@@ -76,46 +75,6 @@ env1 <- bind_rows(env1.1, env1.2) %>%
 
 rm(env1.1, env1.2) ## env1.3 for ghg emissions
 
-## 2. Share of energy use for industry sector ----
-env2 <- read_csv("01_data/agg_bct_e_2.csv", skip = 10, n_max = 1, col_names = FALSE) %>%
-  bind_rows(
-    read_csv("01_data/agg_bct_e_2.csv", skip = 26, n_max = 10, col_names = FALSE)
-  ) %>%
-  remove_empty() %>%
-  row_to_names(1) %>%
-  rename(Industry = 1) %>%
-  mutate(Industry = case_when(
-    str_detect(Industry, "Construction|Mining|Forestry") ~ Industry,
-    TRUE ~ "Manufacturing")) %>%
-  group_by(Industry) %>%
-  summarize_all(sum) %>%
-  pivot_longer(-Industry, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
-  mutate(Metric = "Share of energy use for the industrial sector",
-         Unit = "%",
-         Region = "British Columbia and Territories") %>%
-  select(Metric, Value, Unit, Region, Group1 = Industry)
-
-## shares of GHG emissions (not in Sonya's workbook)
-env2.2 <- read_csv("01_data/agg_bct_e_2.csv", skip = 10, n_max = 1, col_names = FALSE) %>%
-  bind_rows(
-    read_csv("01_data/agg_bct_e_2.csv", skip = 51, n_max = 10, col_names = FALSE)
-  ) %>%
-  remove_empty() %>%
-  row_to_names(1) %>%
-  rename(Industry = 1) %>%
-  mutate(Industry = case_when(
-    str_detect(Industry, "Construction|Mining|Forestry") ~ Industry,
-    TRUE ~ "Manufacturing")) %>%
-  group_by(Industry) %>%
-  summarize_all(sum) %>%
-  pivot_longer(-Industry, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
-  mutate(Metric = "Share of GHG emissions for the industrial sector",
-         Unit = "%",
-         Region = "British Columbia and Territories") %>%
-  select(Metric, Value, Unit, Region, Group1 = Industry)
-
-## 3. Total GHG emissions ----
-
 ## 4. GHG emissions per employee ----
 
 ## industrial sector
@@ -162,36 +121,6 @@ env4 <- bind_rows(env4.1, env4.2) %>%
 
 rm(env4.1, env4.2, env1.3)
 
-## 5. Percentage of Energy Consumed by Fuel Source ----
-env5 <- read_csv("01_data/agg_bct_e_1.csv", skip = 10, n_max = 1, col_names = FALSE) %>%
-  bind_rows(
-    read_csv("01_data/agg_bct_e_1.csv", skip = 14, n_max = 10, col_names = FALSE, na=c("", "X", "NA"))
-  ) %>%
-  remove_empty() %>%
-  row_to_names(1) %>%
-  rename(`Fuel Source` = 1) %>%
-  pivot_longer(-`Fuel Source`, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
-  mutate(`Fuel Source` = str_remove_all(`Fuel Source`, "[:digit:]"),
-         Metric = "Percentage of energy consumed by fuel source",
-         Unit = "Petajoules",
-         Region = "British Columbia and Territories") %>%
-  select(Metric, Value, Unit, Year, Region, Group1 = `Fuel Source`)
-
-## 6. Percentage of GHG emissions by fuel source ----
-env6 <- read_csv("01_data/agg_bct_e_1.csv", skip = 10, n_max = 1, col_names = FALSE) %>%
-  bind_rows(
-    read_csv("01_data/agg_bct_e_1.csv", skip = 40, n_max = 9, col_names = FALSE, na=c("", "X", "NA"))
-  ) %>%
-  remove_empty() %>%
-  row_to_names(1) %>%
-  rename(`Fuel Source` = 1)  %>%
-  pivot_longer(-`Fuel Source`, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
-  mutate(`Fuel Source` = str_remove_all(`Fuel Source`, "[:digit:]"),
-         Metric = "Percentage of GHG emissions by fuel source",
-         Unit = "Mt of CO<sub>2</sub>e",
-         Region = "British Columbia and Territories") %>%
-  select(Metric, Value, Unit, Year, Region, Group1 = `Fuel Source`)
-
 ## 7. Diverted waste as a % of total non-hazardous waste ----
 env7.1 <- diverted_waste %>%
   filter(GEO == "British Columbia") %>%
@@ -224,8 +153,6 @@ env8 <- waste_disposal %>%
          Industry = "Total, all industries",
          Category = "Environmental",
          Metric = "Non-residential waste as % of total non-hazardous waste")
-
-## 9. Water consumption in the manufacturing sector (cubic liters per employee) ----
 
 # Social indicators ----
 
@@ -343,16 +270,6 @@ soc5 <- union %>%
          Category = "Social",
          Metric = "Percentage of employees with union coverage")
   
-## 6. Work absences - total days lost per worker per year ----
-soc6 <- absences %>%
-  filter(REF_DATE >= 2000 & Sex != "Both sexes") %>%
-  filter(str_detect(`Presence of children`,"With")) %>%
-  filter(`Work absence statistics` == "Total days lost per worker in a year") %>%
-  mutate(Gender = ifelse(Sex == "Females", "Women", "Men"),
-         Metric = "Work absences - total days lost per worker per year",
-         Unit = "Days") %>%
-  select(Metric, Value = val_norm, Unit, Year = REF_DATE, Region = GEO, Group1 = Gender, Group2 = `Presence of children`)
-
 ## 7. Mean hourly pay gap (Canada) ----
 soc7 <- pay %>%
   filter(REF_DATE >= 2000, GEO == "Canada") %>%
@@ -391,8 +308,6 @@ soc8 <- pay %>%
          Industry = case_when(Industry == "Total employees, all industries" ~ "Total, all industries",
                               TRUE ~ str_remove_all(Industry, "\\s\\[([:digit:]|-|,|\\s)+\\]")))
 
-## 9. Mean hourly overtime pay by industry ----
-
 ## 10. Mean weekly overtime paid hours by gender ----
 soc10 <- overtime %>%
   filter(REF_DATE >= 2000, GEO == "British Columbia") %>%
@@ -412,37 +327,20 @@ soc10 <- overtime %>%
          Category = "Social")
 
 ## 11. Gender representation by compensation level ----
-## unfinished!! 
-soc_test <- compensation_lvl %>%
-  filter(REF_DATE >= 2010 ) %>%
+soc11 <- compensation_lvl %>%
+  filter(REF_DATE >= 2000) %>%
   filter(str_detect(`Type of work`, "Both")) %>%
-  filter(!str_detect(`North American Industry Classification System (NAICS)`, "sector")) %>%
-  mutate(Industry = str_remove_all(`North American Industry Classification System (NAICS)`, "\\s\\[([:digit:]|-|,|\\s)+\\]")) %>%
-  select(Industry, REF_DATE, `Hourly wages`, Sex, val_norm) %>%
-  group_by(Industry, REF_DATE, Sex) %>%
-  mutate(na_count = sum(is.na(val_norm))) %>%
-  ungroup() %>%
-  pivot_wider(names_from = "Hourly wages", values_from = "val_norm") %>%
-  ## fill in NAs across the wage categories
-  mutate(`Less than $12.00` = ifelse(is.na(`Less than $12.00`) & na_count == 1,
-                                     pmax(0, `Total employees, all wages` - `$12.00 to $19.99` - `$20.00 to $29.99` - `$30.00 or more`),
-                                     `Less than $12.00`),
-         `$12.00 to $19.99`  = ifelse(is.na(`$12.00 to $19.99`) & na_count == 1,
-                                      pmax(0, `Total employees, all wages` - `Less than $12.00` - `$20.00 to $29.99` - `$30.00 or more`),
-                                      `$12.00 to $19.99`),
-         `$20.00 to $29.99`  = ifelse(is.na(`$20.00 to $29.99`) & na_count == 1,
-                                      pmax(0, `Total employees, all wages` - `Less than $12.00` - `$12.00 to $19.99` - `$30.00 or more`),
-                                      `$20.00 to $29.99`),
-         `$30.00 or more`  = ifelse(is.na(`$30.00 or more`) & na_count == 1,
-                                    pmax(0, `Total employees, all wages` - `Less than $12.00` - `$12.00 to $19.99` - `$20.00 to $29.99`),
-                                    `$30.00 or more`),
-         `Less than $20.00` = pmax(0, `Total employees, all wages` - `$20.00 to $29.99` - `$30.00 or more`))
-
-## Use less than 20 for forestry and utilities 
-## Calculate %female as 100*female/(male+female)
-
-
-
+  filter(`North American Industry Classification System (NAICS)` == "Total employees, all industries") %>%
+  rename(Region = GEO) %>%
+  mutate(Industry = "Total, all industries",
+         Year = str_sub(REF_DATE, end = 4)) %>%
+  group_by(Region, Industry, Year, `Hourly wages`, Sex) %>%
+  summarize(mean_val = mean(val_norm), .groups = "drop") %>%
+  pivot_wider(names_from = "Sex", values_from = "mean_val") %>%
+  mutate(Value = 100*Females/(Males + Females),
+         Unit = "%",
+         Metric = "Representation of women by compensation level",
+         Category = "Social")
 
 ## Combine data for summary tables ----
 
@@ -476,7 +374,4 @@ table_data <- table_data %>%
   mutate(Industry = fct_inorder(Industry))
 
 saveRDS(table_data, "01_data/table_data.rds")
-
-
-
 
