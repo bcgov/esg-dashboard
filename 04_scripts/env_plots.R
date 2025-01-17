@@ -90,7 +90,7 @@ line_plot <- function(data, Variable) {
           hoverinfo = "text",
           hovertemplate = "%{text}<extra></extra>") %>%
     layout(
-      title = list(text = paste0(unique(data$Title), "<br><span style='font-size:14'>", unique(data$Region), "</span>")),
+      title = list(text = paste0(unique(data$Metric), "<br><span style='font-size:14'>", unique(data$Region), "</span>")),
       xaxis = list(title = ""),
       yaxis = list(title = unique(data$Unit)),
       hovermode = FALSE
@@ -114,7 +114,7 @@ area_plot <- function(data, Variable){
           hovertemplate = "%{text}<extra></extra>") %>%
     layout(
       #legend = list(traceorder = "reversed"),
-      title = list(text = paste0(unique(data$Title), "<br><span style='font-size:14'>", unique(data$Region), "</span>")),
+      title = list(text = paste0(unique(data$Metric), "<br><span style='font-size:14'>", unique(data$Region), "</span>")),
       xaxis = list(title = ""),
       yaxis = list(title = "Share (%)", range = c(0, 100)),
       hovermode = FALSE
@@ -125,11 +125,11 @@ area_plot <- function(data, Variable){
 
 ## create plots
 Charts <- plot_data %>%
-  group_by(Topic, Metric, Variable) %>%
+  group_by(Topic, Statistic, Variable) %>%
   nest() %>%
   mutate(Plot = case_when(
-    Metric == "Total" ~ map2(data, Variable, line_plot),
-    Metric == "Shares" ~map2(data, Variable, area_plot)))
+    Statistic == "Total" ~ map2(data, Variable, line_plot),
+    Statistic == "Shares" ~map2(data, Variable, area_plot)))
   
 ##Charts[8,"Plot"][[1]]
  

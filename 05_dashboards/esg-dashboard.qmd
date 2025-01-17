@@ -9,7 +9,6 @@ format:
         icon: github
         href: https://github.com/bcgov-c/esg-dashboard
      self-contained: true
-     scrolling: false
      css: ../03_styles/styles.css
 ---
 
@@ -30,9 +29,10 @@ format:
 ```{r data}
 source("../04_scripts/tables.R")
 source("../04_scripts/env_plots.R")
+source("../04_scripts/soc_plots.R")
 ```
 
-# Summary
+# Summary {scrolling="false"}
 
 ##  {.sidebar width="18%"}
 
@@ -130,7 +130,7 @@ div(Charts[8,"Plot"][[1]])
 :::
 
 
-# Social
+# Social {scrolling="true"}
 
 ##  {.sidebar width="18%"}
 
@@ -157,6 +157,23 @@ Data sources and further information on the metrics are available in the About t
 `r htmltools::knit_print.html(t_soc)`
 
 </details>
+
+### Row
+```{r}
+div(complvl_plot[1,"Plot"][[1]])
+```
+
+
+### Row
+```{r}
+age_tbl
+```
+
+
+```{r}
+ot_tbl
+```
+
 
 # About {scrolling="true"}
 
@@ -252,4 +269,11 @@ Data sources and further information on the metrics are available in the About t
 
 ::: {.card fill="false" title="Mean weekly overtime hours of all employees"}
 **Source:** Statistics Canada. [Table 14-10-0076-01 Employees working overtime (weekly) by industry, annual](https://doi.org/10.25318/1410007601-eng)
+:::
+
+
+::: {.card fill="false" title="Work absence of full-time employees"}
+**Source:** Statistics Canada. [Table 14-10-0194-01  Work absence of full-time employees by sex and presence of children, annual](https://doi.org/10.25318/1410019401-eng)
+
+**Note:** The term "with children" consists of children aged 00 to 24 years old, with 00 being less than 1 year.
 :::

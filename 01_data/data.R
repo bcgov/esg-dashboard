@@ -9,28 +9,39 @@
 # Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
-# 
+
 library(tidyverse)
 library(janitor)
 library(cansim)
-# 
-# # Cansim tables ----
-# diverted_waste <- get_cansim("3810013801")
-# waste_disposal <- get_cansim("3810003201")
-# labour <- get_cansim("1410002301")
-# board_rep <- get_cansim("3310050101")
-# disability <- get_cansim("1310075701")
-# union <- get_cansim("1410006901")
-# pay <- get_cansim("1410006301")
-# overtime <- get_cansim("1410007601")
-# compensation_lvl <- get_cansim("1410011301")
 
-# Environmental indicators ----
+# Cansim tables ----
+diverted_waste <- get_cansim("3810013801")
+waste_disposal <- get_cansim("3810003201")
+labour <- get_cansim("1410002301")
+board_rep <- get_cansim("3310050101")
+disability <- get_cansim("1310075701")
+union <- get_cansim("1410006901")
+pay <- get_cansim("1410006301")
+overtime <- get_cansim("1410007601")
+compensation_lvl <- get_cansim("1410011301")
+absences <- get_cansim("1410019401")
 
+# Energy use tables ----
+## file names for the energy use data downloaded from Natural Resources Canada
+ind_energyuse_1 <- "01_data/agg_bct_e_1.csv"
+ind_energyuse_2 <- "01_data/agg_bct_e_2.csv"
+agr_energyuse_1 <- "01_data/agr_bct_e_1.csv"
+
+# Industry ordering file ----
+## table used to provide an order to the industries in the summary tables
+industry_order <- read_csv("01_data/industry_order.csv")
+
+
+# Environmental indicators for summary tables----
 ## 1. Energy use per employee ----
 
 ## industrial sector
-env1.1 <- read_csv("01_data/agg_bct_e_2.csv", skip = 10, n_max = 13) %>%
+env1.1 <- read_csv(ind_energyuse_2, skip = 10, n_max = 13) %>%
   remove_empty() %>%
   rename(Industry = 1) %>%
   ## Remove Total and header rows - Total to be recalculated with the addition of Agriculture
@@ -42,7 +53,7 @@ env1.1 <- read_csv("01_data/agg_bct_e_2.csv", skip = 10, n_max = 13) %>%
   summarize_all(sum)
 
 ## agriculture sector
-env1.2 <- read_csv("01_data/agr_bct_e_1.csv", skip = 10, n_max = 2) %>%
+env1.2 <- read_csv(agr_energyuse_1, skip = 10, n_max = 2) %>%
   remove_empty() %>%
   rename(Industry = 1) %>%
   mutate(Industry = "Agriculture")
@@ -78,9 +89,9 @@ rm(env1.1, env1.2) ## env1.3 for ghg emissions
 ## 4. GHG emissions per employee ----
 
 ## industrial sector
-env4.1 <- read_csv("01_data/agg_bct_e_2.csv", skip = 10, n_max = 1, col_names = FALSE) %>%
+env4.1 <- read_csv(ind_energyuse_2, skip = 10, n_max = 1, col_names = FALSE) %>%
   bind_rows(
-    read_csv("01_data/agg_bct_e_2.csv", skip = 39, n_max = 10, col_names = FALSE)
+    read_csv(ind_energyuse_2, skip = 39, n_max = 10, col_names = FALSE)
   ) %>%
   remove_empty() %>%
   row_to_names(1) %>%
@@ -92,9 +103,9 @@ env4.1 <- read_csv("01_data/agg_bct_e_2.csv", skip = 10, n_max = 1, col_names = 
   summarize_all(sum)
 
 ## agriculture sector
-env4.2 <- read_csv("01_data/agr_bct_e_1.csv", skip = 10, n_max = 1, col_names = FALSE) %>%
+env4.2 <- read_csv(agr_energyuse_1, skip = 10, n_max = 1, col_names = FALSE) %>%
   bind_rows(
-    read_csv("01_data/agr_bct_e_1.csv", skip = 44, n_max = 1, col_names = FALSE)
+    read_csv(agr_energyuse_1, skip = 44, n_max = 1, col_names = FALSE)
     ) %>%
   remove_empty() %>%
   row_to_names(1) %>%
@@ -154,7 +165,7 @@ env8 <- waste_disposal %>%
          Category = "Environmental",
          Metric = "Non-residential waste as % of total non-hazardous waste")
 
-# Social indicators ----
+# Social indicators for summary tables----
 
 labour_NAICS = c("[111-112, 1100, 1151-1152]","[113, 1153]", 
                  "[21, 2100]", "[22]", "[23]",
@@ -342,7 +353,7 @@ soc11 <- compensation_lvl %>%
          Metric = "Representation of women by compensation level",
          Category = "Social")
 
-## Combine data for summary tables ----
+# Combine data for summary tables ----
 
 format_for_tables <- function(data) {
   
@@ -366,8 +377,6 @@ format_for_tables <- function(data) {
 table_data <- map_dfr(list(env1, env4, env7, env8, soc1, soc2, soc3, soc4, soc5, soc7, soc8, soc10, soc11), format_for_tables)
 
 ## Order industries
-industry_order <- read_csv("01_data/industry_order.csv")
-
 table_data <- table_data %>% 
   left_join(industry_order, by = "Industry") %>%
   arrange(Category, Industry_Order) %>%
@@ -375,3 +384,271 @@ table_data <- table_data %>%
 
 saveRDS(table_data, "01_data/table_data.rds")
 
+# Environmental indicators for plots ----
+## Energy use ----
+### Total energy use by industry ----
+en_total_ind <- read_csv(ind_energyuse_2, skip = 10, n_max = 13) %>%
+  remove_empty(which = c("rows", "cols")) %>%
+  rename(Group = 1) %>%
+  ## Remove Total and header rows - Total to be recalculated with the addition of Agriculture
+  filter(!str_detect(Group, "PJ")) %>%
+  ## Combine all manufacturing industries
+  mutate(
+    Group = case_when(
+      str_detect(Group, "Construction|Mining|Forestry") ~ Group,
+      TRUE ~ "Manufacturing")) %>%
+  group_by(Group) %>%
+  summarize_all(sum) %>%
+  pivot_longer(-Group, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
+  mutate(Topic = "Energy use",
+         Variable = "Industry",
+         Statistic = "Total",
+         Metric = "Total energy use by industry", 
+         Region = "B.C. and Territories",
+         Unit = "Petajoules") %>%
+  select(Topic, Statistic, Variable, Metric, Region, Group, Year, Value, Unit)
+
+### Share of energy use by industry ----
+en_share_ind <- bind_rows(
+  read_csv(ind_energyuse_2, skip = 10, n_max = 1, col_names = FALSE),
+  read_csv(ind_energyuse_2, skip = 26, n_max = 10, col_names = FALSE)
+) %>%
+  remove_empty(which = c("rows", "cols")) %>%
+  row_to_names(1) %>%
+  rename(Group = 1) %>%
+  ## Combine all manufacturing industries
+  mutate(
+    Group = case_when(
+      str_detect(Group, "Construction|Mining|Forestry") ~ Group,
+      TRUE ~ "Manufacturing")) %>%
+  group_by(Group) %>%
+  summarize_all(sum) %>%
+  pivot_longer(-Group, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
+  mutate(Topic = "Energy use",
+         Variable = "Industry",
+         Statistic = "Shares",
+         Metric = "Share of energy use by industry",
+         Region = "B.C. and Territories",
+         Unit = "%") %>%
+  select(Topic, Statistic, Variable, Metric, Region, Group, Year, Value, Unit)
+
+### Total energy use by energy source ----
+en_total_source <- bind_rows(
+  read_csv(ind_energyuse_1, skip = 10, n_max = 1, col_names = FALSE) ,
+  read_csv(ind_energyuse_1, skip = 14, n_max = 10, col_names = FALSE, na=c("", "X", "NA"))
+) %>%
+  remove_empty(which = c("rows", "cols")) %>%
+  row_to_names(1) %>%
+  rename(Group = 1) %>%
+  pivot_longer(-Group, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
+  ## remove na values so they are not plotted as zero
+  filter(!is.na(Value)) %>%
+  ## collapse energy sources
+  mutate(Group = case_when(
+    Group %in% c("Heavy Fuel Oil",
+                 "Coke and Coke Oven Gas",
+                 "Other2") ~ "Other",
+    TRUE ~ Group)) %>%
+  group_by(Group, Year) %>%
+  summarize(Value = sum(Value, na.rm = TRUE), .groups = "drop") %>%
+  mutate(Topic = "Energy use",
+         Variable = "Energy source",
+         Statistic = "Total",
+         Metric = "Total energy use by energy source",
+         Region = "B.C. and Territories",
+         Unit = "Petajoules") %>%
+  select(Topic, Statistic, Variable, Metric, Region, Group, Year, Value, Unit)
+
+### Share of energy use by energy source ----
+en_share_source <- bind_rows(
+  read_csv(ind_energyuse_1, skip = 10, n_max = 1, col_names = FALSE) ,
+  read_csv(ind_energyuse_1, skip = 26, n_max = 10, col_names = FALSE, na=c("", "X", "NA"))
+) %>%
+  remove_empty(which = c("rows", "cols")) %>%
+  row_to_names(1) %>%
+  rename(Group = 1) %>%
+  pivot_longer(-Group, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
+  ## remove na values so they are not plotted as zero
+  filter(!is.na(Value)) %>%
+  ## collapse energy sources
+  mutate(Group = case_when(
+    Group %in% c("Heavy Fuel Oil",
+                 "Coke and Coke Oven Gas",
+                 "Other2") ~ "Other",
+    TRUE ~ Group)) %>%
+  group_by(Group, Year) %>%
+  summarize(Value = sum(Value, na.rm = TRUE), .groups = "drop") %>%
+  ## calculate the % suppressed
+  group_by(Year) %>%
+  ## add a row for each year to represent the % suppressed (100-sum(unsuppressed), with minimum of 0)
+  bind_rows(summarise(., 
+                      across(Group, ~"Suppressed"),
+                      across(Value, ~max(0, 100-sum(.x))))) %>%
+  ungroup() %>%
+  mutate(Topic = "Energy use",
+         Variable = "Energy source",
+         Statistic = "Shares",
+         Metric = "Share of energy use by energy source",
+         Region = "B.C. and Territories",
+         Unit = "%") %>%
+  select(Topic, Statistic, Variable, Metric, Region, Group, Year, Value, Unit)
+
+## GHG emissions ----
+### Total GHG emissions by industry ----
+ghg_total_ind <- bind_rows(
+  read_csv(ind_energyuse_2, skip = 10, n_max = 1, col_names = FALSE),
+  read_csv(ind_energyuse_2, skip = 39, n_max = 10, col_names = FALSE)
+) %>%
+  remove_empty(which = c("rows", "cols")) %>%
+  row_to_names(1) %>%
+  rename(Group = 1) %>%
+  ## Combine all manufacturing industries
+  mutate(
+    Group = case_when(
+      str_detect(Group, "Construction|Mining|Forestry") ~ Group,
+      TRUE ~ "Manufacturing")) %>%
+  group_by(Group) %>%
+  summarize_all(sum) %>%
+  pivot_longer(-Group, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
+  mutate(Topic = "GHG emissions",
+         Variable = "Industry",
+         Statistic = "Total",
+         Metric = "Total GHG emissions by industry",
+         Region = "B.C. and Territories",
+         Unit = "Mt of CO2e") %>%
+  select(Topic, Statistic, Variable, Metric, Region, Group, Year, Value, Unit)
+
+### Share of GHG emissions by industry ----
+ghg_share_ind <- bind_rows(
+  read_csv(ind_energyuse_2, skip = 10, n_max = 1, col_names = FALSE),
+  read_csv(ind_energyuse_2, skip = 51, n_max = 10, col_names = FALSE)
+) %>%
+  remove_empty(which = c("rows", "cols")) %>%
+  row_to_names(1) %>%
+  rename(Group = 1) %>%
+  ## Combine all manufacturing industries
+  mutate(
+    Group = case_when(
+      str_detect(Group, "Construction|Mining|Forestry") ~ Group,
+      TRUE ~ "Manufacturing")) %>%
+  group_by(Group) %>%
+  summarize_all(sum) %>%
+  pivot_longer(-Group, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
+  mutate(Topic = "GHG emissions",
+         Variable = "Industry",
+         Statistic = "Shares",
+         Metric = "Share of GHG emissions by industry",
+         Region = "B.C. and Territories",
+         Unit = "%") %>%
+  select(Topic, Statistic, Variable, Metric, Region, Group, Year, Value, Unit)
+
+### Total GHG emissions by energy source ----
+ghg_total_source <- bind_rows(
+  read_csv(ind_energyuse_1, skip = 10, n_max = 1, col_names = FALSE) ,
+  read_csv(ind_energyuse_1, skip = 40, n_max = 9, col_names = FALSE, na=c("", "X", "NA"))
+) %>%
+  remove_empty(which = c("rows", "cols")) %>%
+  row_to_names(1) %>%
+  rename(Group = 1)  %>%
+  pivot_longer(-Group, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
+  ## remove na values so they are not plotted as zero
+  filter(!is.na(Value)) %>%
+  ## collapse energy sources
+  mutate(Group = case_when(
+    Group %in% c("Coke and Coke Oven Gas",
+                 "Other2") ~ "Other",
+    TRUE ~ Group)) %>%
+  group_by(Group, Year) %>%
+  summarize(Value = sum(Value, na.rm = TRUE), .groups = "drop") %>%
+  mutate(Topic = "GHG emissions",
+         Variable = "Energy source",
+         Statistic = "Total",
+         Metric = "Total GHG emissions by energy source",
+         Region = "B.C. and Territories",
+         Unit = "Mt CO2e") %>%
+  select(Topic, Statistic, Variable, Metric, Region, Group, Year, Value, Unit)
+
+### Share of GHG emissions by energy source ----
+ghg_share_source <- bind_rows(
+  read_csv(ind_energyuse_1, skip = 10, n_max = 1, col_names = FALSE) ,
+  read_csv(ind_energyuse_1, skip = 52, n_max = 10, col_names = FALSE, na=c("", "X", "NA"))
+) %>%
+  remove_empty(which = c("rows", "cols")) %>%
+  row_to_names(1) %>%
+  rename(Group = 1) %>%
+  pivot_longer(-Group, names_to = "Year", values_to = "Value", names_transform = as.numeric) %>%
+  ## remove na values so they are not plotted as zero
+  filter(!is.na(Value)) %>%
+  ## collapse energy sources
+  mutate(Group = case_when(
+    Group %in% c("Coke and Coke Oven Gas",
+                 "Other2") ~ "Other",
+    TRUE ~ Group)) %>%
+  group_by(Group, Year) %>%
+  summarize(Value = sum(Value, na.rm = TRUE), .groups = "drop") %>%
+  ## calculate the % suppressed
+  group_by(Year) %>%
+  ## add a row for each year to represent the % suppressed (100-sum(unsuppressed), with minimum of 0)
+  bind_rows(summarise(., 
+                      across(Group, ~"Suppressed"),
+                      across(Value, ~max(0, 100-sum(.x))))) %>%
+  ungroup() %>%
+  mutate(Topic = "GHG emissions",
+         Variable = "Energy source",
+         Statistic = "Shares",
+         Metric = "Share of GHG emissions by energy source",
+         Region = "B.C. and Territories",
+         Unit = "%") %>%
+  select(Topic, Statistic, Variable, Metric, Region, Group, Year, Value, Unit)
+
+## combine ----
+bind_rows(
+  en_total_ind,
+  en_share_ind,
+  en_total_source,
+  en_share_source,
+  ghg_total_ind,
+  ghg_share_ind,
+  ghg_total_source,
+  ghg_share_source
+) %>% 
+  saveRDS("01_data/env_plot_data.rds")
+
+# Social indicators for plots ----
+
+## Employment by age group ----
+emp <- soc2 %>%
+  select(Metric, Region, Group1 = Industry, Group2 = Age, Year, Value, Unit) %>%
+  filter(Group2 != "15 years and over") %>%
+  mutate(Unit = "Percentage") 
+  
+
+## Mean weekly overtime hours by gender ----
+ot <- soc10 %>%
+  select(Metric, Region, Group1 = Industry, Group2 = Gender, Year, Value, Unit) %>%
+  filter(Group2 != "Both genders") %>%
+  mutate(Metric = "Mean weekly overtime hours by gender")
+
+## Representation of women by compensation level ----
+complvl <- soc11 %>%
+  select(Metric, Region, Group1 = Industry, Group2 = `Hourly wages`, Year, Value, Unit) %>%
+  mutate(Unit = "Percentage")
+
+## Work absences by gender and presence of children ----
+wkabsence <- absences %>%
+    filter(REF_DATE >= 2000 & Sex != "Both sexes") %>%
+    filter(str_detect(`Presence of children`,"With")) %>% ## filter for With and Without children only
+    filter(`Work absence statistics` == "Total days lost per worker in a year") %>%
+    mutate(Gender = ifelse(Sex == "Females", "Women", "Men"),
+           Metric = "Work absences by gender and presence of children",
+           Unit = "Total Days per Worker") %>%
+    select(Metric, Region = GEO, Group1 = Gender, Group2 = `Presence of children`, Value = val_norm, Unit, Year = REF_DATE)
+
+## combine ----
+bind_rows(emp, ot, complvl, wkabsence) %>%
+  ## Changing this to say public admin instead because 
+  ## filtering the table later for "Public administration" picks up both 
+  ## Public administration and Other service (except public administration)
+  mutate(Group1 = ifelse(Group1 == "Other services (except public administration)", "Other services (except public admin)", Group1),
+         Year = as.numeric(Year)) %>%
+  saveRDS("01_data/soc_plot_data.rds")
