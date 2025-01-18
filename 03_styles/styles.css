@@ -53,3 +53,8 @@ input::placeholder {
   opacity:1;
   color: black;
 }
+
+/*On environment tab, in tabset, need this to add space between the two rows of plots*/
+.env_plot_row {
+    margin-bottom: 17px;
+}
