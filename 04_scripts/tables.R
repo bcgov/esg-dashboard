@@ -102,7 +102,9 @@ t_env <- browsable( ## make objects render as HTML by default when printed at th
           placeholder = "All industries",
           type = "text",
           style = "padding: 0.25rem 0.5rem; margin: 0.5rem; border:solid 0.85px;",
-          oninput = "Reactable.setSearch('expansion-table-env', this.value)"
+          ## Note: Example uses setSearch
+          ## use setFilter instead to filter the Industry column instead of searching the table
+          oninput = "Reactable.setFilter('expansion-table-env', 'Industry', this.value)"
           )),
       
       # custom Metric filter
@@ -180,7 +182,7 @@ t_soc <- browsable( ## make objects render as HTML by default when printed at th
         placeholder = "All industries",
         type = "text",
         style = "padding: 0.25rem 0.5rem; margin: 0.5rem; border:solid 0.85px;",
-        oninput = "Reactable.setSearch('expansion-table-soc', this.value)"
+        oninput = "Reactable.setFilter('expansion-table-soc', 'Industry', this.value)"
     )),
     
     # custom Metric filter
@@ -248,6 +250,7 @@ t_soc <- browsable( ## make objects render as HTML by default when printed at th
                 Region = colDef(minWidth = 100),
                 Age = colDef(show = FALSE),
                 Gender = colDef(show = FALSE),
+                `Hourly wages` = colDef(show = FALSE),
                 Definition = colDef(aggregate = "unique", show = FALSE)),
               # expandable details
               details = colDef(
