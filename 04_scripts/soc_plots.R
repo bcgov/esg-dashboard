@@ -18,12 +18,9 @@ library(htmltools)
 
 ## read in data
 plot_data <- readRDS("../01_data/soc_plot_data.rds")
-plot_colors <- RColorBrewer::brewer.pal(n = 5, name = "Set3")[-2] ## remove the yellows
-
-data <- plot_data %>% filter(Group1 == "Total, all industries", Metric == "Employment by age group")
 
 # layout options to use for all charts
-plotly_custom_layout <- function(plot) {
+plotly_custom_layout_soc <- function(plot) {
   
   plot %>%
     layout(
@@ -53,20 +50,36 @@ line_plot_1group <- function(data, Group1) {
       hovermode = FALSE
       #hovermode = "x unified" # Unified hover mode
     ) %>%
-    plotly_custom_layout()
+    plotly_custom_layout_soc()
 }
 
 line_plot_2groups <- function(data) {
+  plot_ly(data, x = ~Year, y = ~Value, color = ~Group1, linetype = ~Group2,   
+          colors = ~Color,
+          type = 'scatter', mode = 'lines+markers',
+          text = ~paste0(Group2, ": ", format(round_half_up(Value, digits = 1), nsmall = 1)),
+          textposition = "none",
+          hoverinfo = "text",
+          hovertemplate = "%{text}<extra></extra>") %>%
+    layout(
+      title = list(text = paste0(unique(data$Metric), "<br><span style='font-size:14'>Total, all industries<br>", unique(data$Region), "</span>")),
+      xaxis = list(title = ""),
+      yaxis = list(title = unique(data$Unit)),
+      hovermode = FALSE
+      #hovermode = "x unified" # Unified hover mode
+    ) %>%
+    plotly_custom_layout_soc()
   
 }
 
-## Employment by age group
+## Employment by age group ----
 age_plots <- plot_data %>% 
   filter(Metric == "Employment by age group") %>%
   mutate(Color = case_when(
     Group2 == "15 to 24 years" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[1],
     Group2 == "25 to 54 years" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[3],
-    Group2 == "55 years and over" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[4])) %>%
+    Group2 == "55 years and over" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[4]),
+    Group2 = fct_inorder(Group2)) %>%
   group_by(Group1) %>%
   nest() %>%
   mutate(Plot = map2(data, Group1, line_plot_1group)) %>%
@@ -97,7 +110,7 @@ age_tbl <- browsable( ## make objects render as HTML by default when printed at 
                 )
               ))))
 
-## Mean weekly overtime hours by gender
+## Mean weekly overtime hours by gender ----
 ot_plots <- plot_data %>% 
   filter(Metric == "Mean weekly overtime hours by gender") %>%
   mutate(Color = case_when(
@@ -121,7 +134,7 @@ ot_tbl <- browsable( ## make objects render as HTML by default when printed at t
         id = "industry-selector-ot",
         style = "padding: 0.3rem 0.5rem; margin:0.5rem; border:solid 0.85px;width:50%",
         onchange = "Reactable.setFilter('ot-plot-table', 'Group1', this.value)",
-        lapply(unique(age_plots$Group1), tags$option)
+        lapply(unique(ot_plots$Group1), tags$option)
       )),
     reactable(ot_plots, compact = TRUE, pagination = FALSE,
               elementId = "ot-plot-table",
@@ -134,7 +147,7 @@ ot_tbl <- browsable( ## make objects render as HTML by default when printed at t
               ))))
 
 
-## Representation of women by compensation level
+## Representation of women by compensation level ----
 complvl_plot <- plot_data %>% 
   filter(Metric == "Representation of women by compensation level") %>%
   mutate(Color = case_when(
@@ -149,6 +162,15 @@ complvl_plot <- plot_data %>%
   mutate(Plot = map2(data, Group1, line_plot_1group)) %>%
   select(Group1, Plot)
 
-## Work absences by gender and presence of children
+## Work absences by gender and presence of children ----
+wkabsence_plot <- plot_data %>%
+  filter(Metric == "Work absences by gender and presence of children") %>%
+  mutate(Color = case_when(
+    Group1 == "Men" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[1],
+    Group1 == "Women" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[3])) %>%
+  line_plot_2groups()
+  
+
+
 
 
