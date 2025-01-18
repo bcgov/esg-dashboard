@@ -16,20 +16,21 @@ There are four core folders that are required to run the dashboard:
 
 ### Data Sources
 
-1.  Natural Resources Canada. [Industrial Sector - Secondary Energy Use and GHG Emissions by Industry](https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/showTable.cfm?type=CP&sector=agg&juris=bct&year=2021&rn=2&page=0)
-2.  Natural Resources Canada. [Agriculture Sector - Secondary Energy Use and GHG Emissions by End-Use and Energy Source -- Excluding Electricity-Related Emissions](https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/showTable.cfm?type=CP&sector=agr&juris=bct&year=2021&rn=1&page=0)
-3. Statistics Canada. [Table 14-10-0023-01 Labour force characteristics by industry, annual (x 1,000)](https://doi.org/10.25318/1410002301-eng)
-4. Statistics Canada. [Table 38-10-0138-01 Waste materials diverted, by type and by source](https://doi.org/10.25318/3810013801-eng)
-5. Statistics Canada. [Table 38-10-0032-01 Disposal of waste, by source](https://doi.org/10.25318/3810003201-eng)
-6. Statistics Canada. [Table 14-10-0023-01 Labour force characteristics by industry, annual (x 1,000)](https://doi.org/10.25318/1410002301-eng)
-7. Statistics Canada. [Table 14-10-0023-01 Labour force characteristics by industry, annual (x 1,000)](https://doi.org/10.25318/1410002301-eng)
-8. Statistics Canada. [Table 33-10-0501-01 Representation of women and men on boards of directors and in officer positions, by firm attributes](https://doi.org/10.25318/3310050101-eng)
-9. Statistics Canada. [Table 13-10-0757-01 Industry of employment for persons with and without disabilities aged 25 to 64 years, by sex](https://doi.org/10.25318/1310075701-eng)
-10. Statistics Canada. [Table 14-10-0069-01 Union coverage by industry, monthly, unadjusted for seasonality (x 1,000)](https://doi.org/10.25318/1410006901-eng)
-11. Statistics Canada. [Table 14-10-0063-01 Employee wages by industry, monthly, unadjusted for seasonality](https://doi.org/10.25318/1410006301-eng)
-12. Statistics Canada. [Table 14-10-0076-01 Employees working overtime (weekly) by industry, annual](https://doi.org/10.25318/1410007601-eng)
+1.  Natural Resources Canada. [Industrial Sector - Table 1: Secondary Energy Use and GHG Emissions by Energy Source](https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/showTable.cfm?type=CP&sector=agg&juris=bct&year=2021&rn=1&page=0)
+2.  Natural Resources Canada. [Industrial Sector - Table 2: Secondary Energy Use and GHG Emissions by Industry](https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/showTable.cfm?type=CP&sector=agg&juris=bct&year=2021&rn=2&page=0)
+3.  Natural Resources Canada. [Agriculture Sector - Table 11: Secondary Energy Use and GHG Emissions by End-Use and Energy Source -- Excluding Electricity-Related Emissions](https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/showTable.cfm?type=CP&sector=agr&juris=bct&year=2021&rn=1&page=0)
+4.  Statistics Canada. [Table 14-10-0023-01 Labour force characteristics by industry, annual (x 1,000)](https://doi.org/10.25318/1410002301-eng)
+5.  Statistics Canada. [Table 38-10-0138-01 Waste materials diverted, by type and by source](https://doi.org/10.25318/3810013801-eng)
+6.  Statistics Canada. [Table 38-10-0032-01 Disposal of waste, by source](https://doi.org/10.25318/3810003201-eng)
+7.  Statistics Canada. [Table 33-10-0501-01 Representation of women and men on boards of directors and in officer positions, by firm attributes](https://doi.org/10.25318/3310050101-eng)
+8.  Statistics Canada. [Table 13-10-0757-01 Industry of employment for persons with and without disabilities aged 25 to 64 years, by sex](https://doi.org/10.25318/1310075701-eng)
+9.  Statistics Canada. [Table 14-10-0069-01 Union coverage by industry, monthly, unadjusted for seasonality (x 1,000)](https://doi.org/10.25318/1410006901-eng)
+10. Statistics Canada. [Table 14-10-0063-01 Employee wages by industry, monthly, unadjusted for seasonality](https://doi.org/10.25318/1410006301-eng)
+11. Statistics Canada. [Table 14-10-0076-01 Employees working overtime (weekly) by industry, annual](https://doi.org/10.25318/1410007601-eng)
+12. Statistics Canada. [Table 14-10-0113-01 Hourly wage distributions by type of work, monthly, unadjusted for seasonality (x 1,000)](https://doi.org/10.25318/1410011301-eng)
+13. Statistics Canada. [Table 14-10-0194-01 Work absence of full-time employees by sex and presence of children, annual](https://doi.org/10.25318/1410019401-eng)
 
-For sources 1 and 2, download the data tables then open and save as csv (original format .xls). For the remainder of the sources, use the cansim package to access them directly. 
+For sources 1 - 3, download the data tables then open and save as csv (original format .xls). For the remainder of the sources, use the cansim package to access them directly.
 
 ### Project Status
 
