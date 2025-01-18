@@ -28,7 +28,7 @@ plot_data <- readRDS("../01_data/env_plot_data.rds")
 ## plotly code
 
 # layout options to use for all charts
-plotly_custom_layout <- function(plot) {
+plotly_custom_layout_env <- function(plot) {
   
   plot %>%
     layout(
@@ -96,7 +96,7 @@ line_plot <- function(data, Variable) {
       hovermode = FALSE
       #hovermode = "x unified" # Unified hover mode
     ) %>%
-    plotly_custom_layout()
+    plotly_custom_layout_env()
 }
 
 ## stacked area plots
@@ -120,7 +120,7 @@ area_plot <- function(data, Variable){
       hovermode = FALSE
       #hovermode = "x unified" # Unified hover mode
     ) %>%
-    plotly_custom_layout()
+    plotly_custom_layout_env()
 }
 
 ## create plots
