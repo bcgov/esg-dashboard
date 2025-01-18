@@ -83,7 +83,7 @@ Data sources and further information on the metrics are available in the About t
 ::: panel-tabset
 ## Energy Use for the Industrial Sector
 
-### Row
+### Row {.env_plot_row}
 
 ```{r}
 div(Charts[1,"Plot"][[1]])
@@ -92,7 +92,6 @@ div(Charts[1,"Plot"][[1]])
 ```{r}
 div(Charts[2,"Plot"][[1]])
 ```
-
 
 ### Row
 
@@ -106,7 +105,7 @@ div(Charts[4,"Plot"][[1]])
 
 ## GHG Emisssions for the Industrial Sector
 
-### Row
+### Row {.env_plot_row}
 
 ```{r}
 div(Charts[5,"Plot"][[1]])
@@ -115,7 +114,6 @@ div(Charts[5,"Plot"][[1]])
 ```{r}
 div(Charts[6,"Plot"][[1]])
 ```
-
 
 ### Row
 
@@ -126,9 +124,7 @@ div(Charts[7,"Plot"][[1]])
 ```{r}
 div(Charts[8,"Plot"][[1]])
 ```
-
 :::
-
 
 # Social {scrolling="true"}
 
@@ -159,21 +155,24 @@ Data sources and further information on the metrics are available in the About t
 </details>
 
 ### Row
+
 ```{r}
 div(complvl_plot[1,"Plot"][[1]])
 ```
 
+```{r}
+wkabsence_plot
+```
 
 ### Row
+
 ```{r}
 age_tbl
 ```
 
-
 ```{r}
 ot_tbl
 ```
-
 
 # About {scrolling="true"}
 
@@ -212,7 +211,7 @@ ot_tbl
 ::: {.card title="Energy Use and GHG Emissions by Energy Source" fill="false"}
 **Source:** Natural Resources Canada. [Industrial sector -- Aggregated industries: British Columbia and territories, Table 1: Secondary Energy Use and GHG Emissions by Energy Source](https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/showTable.cfm?type=CP&sector=agg&juris=bct&year=2021&rn=1&page=0)
 
-**Notes:** 
+**Notes:**
 
 -   Data on GHG emissions are presented excluding GHG emissions related to electricity production.
 
@@ -271,9 +270,12 @@ ot_tbl
 **Source:** Statistics Canada. [Table 14-10-0076-01 Employees working overtime (weekly) by industry, annual](https://doi.org/10.25318/1410007601-eng)
 :::
 
+::: {.card fill="false" title="Representation of women by compensation level"}
+**Source:** Statistics Canada. [Table 14-10-0113-01 Hourly wage distributions by type of work, monthly, unadjusted for seasonality (x 1,000)](https://doi.org/10.25318/1410011301-eng)
+:::
 
-::: {.card fill="false" title="Work absence of full-time employees"}
-**Source:** Statistics Canada. [Table 14-10-0194-01  Work absence of full-time employees by sex and presence of children, annual](https://doi.org/10.25318/1410019401-eng)
+::: {.card fill="false" title="Work absences by gender and presence of children"}
+**Source:** Statistics Canada. [Table 14-10-0194-01 Work absence of full-time employees by sex and presence of children, annual](https://doi.org/10.25318/1410019401-eng)
 
 **Note:** The term "with children" consists of children aged 00 to 24 years old, with 00 being less than 1 year.
 :::
