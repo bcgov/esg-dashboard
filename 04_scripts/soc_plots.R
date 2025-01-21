@@ -39,7 +39,7 @@ line_plot_1group <- function(data, Group1) {
   plot_ly(data, x = ~Year, y = ~Value, color = ~Group2, 
           colors = ~Color,
           type = 'scatter', mode = 'lines+markers',
-          text = ~paste0(Group2, ": ", format(round_half_up(Value, digits = 1), nsmall = 1)),
+          text = ~paste0("<b>", Year, "</b>, ",Group2, ": ", format(round_half_up(Value, digits = 1), nsmall = 1)),
           textposition = "none",
           hoverinfo = "text",
           hovertemplate = "%{text}<extra></extra>") %>%
@@ -57,7 +57,7 @@ line_plot_2groups <- function(data) {
   plot_ly(data, x = ~Year, y = ~Value, color = ~Group1, linetype = ~Group2,   
           colors = ~Color,
           type = 'scatter', mode = 'lines+markers',
-          text = ~paste0(Group2, ": ", format(round_half_up(Value, digits = 1), nsmall = 1)),
+          text = ~paste0("<b>", Year, "</b>, ",Group2, ": ", format(round_half_up(Value, digits = 1), nsmall = 1)),
           textposition = "none",
           hoverinfo = "text",
           hovertemplate = "%{text}<extra></extra>") %>%

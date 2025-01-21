@@ -85,7 +85,7 @@ line_plot <- function(data, Variable) {
   plot_ly(data, x = ~Year, y = ~Value, color = ~Group, 
           colors = colors,
           type = 'scatter', mode = 'lines+markers',
-          text = ~paste0(Group, ": ", format(round_half_up(Value, digits = 1), nsmall = 1)),
+          text = ~paste0("<b>", Year, "</b>, ",Group, ": ", format(round_half_up(Value, digits = 1), nsmall = 1)),
           textposition = "none",
           hoverinfo = "text",
           hovertemplate = "%{text}<extra></extra>") %>%
@@ -108,7 +108,7 @@ area_plot <- function(data, Variable){
           colors = colors, type = 'scatter', mode = 'none',
           ## make chart stacked
           stackgroup='one', fill = 'tonexty',
-          text = ~paste0(Group, ": ", format(round_half_up(Value, digits = 1), nsmall = 1)),
+          text = ~paste0("<b>", Year, "</b>, ",Group, ": ", format(round_half_up(Value, digits = 1), nsmall = 1)),
           textposition = "none",
           hoverinfo = "text",
           hovertemplate = "%{text}<extra></extra>") %>%
