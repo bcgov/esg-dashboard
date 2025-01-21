@@ -58,3 +58,7 @@ input::placeholder {
 .env_plot_row {
     margin-bottom: 17px;
 }
+
+ul {
+  padding-left:1rem;
+}
