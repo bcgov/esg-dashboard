@@ -64,9 +64,17 @@ ul {
   padding-left:1rem;
 }
 
-/*remove the scrollbar from the sidebar and have it scroll along with the rest of the page*/
+/*side bar formatting*/
+/* Default behavior for mobile screens (scrollable sidebar) */
 .sidebar {
-    position: static !important; /* Ensure the sidebar is not fixed */
-    overflow: visible !important; /* Remove the scrollbar */
+    overflow: auto !important; /* Ensure scrolling works on mobile */
 }
+
+/* Override for larger screens (disable sidebar's scrollbar) */
+@media (min-width: 768px) {
+    .sidebar {
+        overflow: visible !important; /* No scrollbar on larger screens */
+    }
+}
+
 
