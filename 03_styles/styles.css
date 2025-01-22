@@ -59,6 +59,14 @@ input::placeholder {
     margin-bottom: 17px;
 }
 
+/*reduce the left padding on unordered lists*/
 ul {
   padding-left:1rem;
 }
+
+/*remove the scrollbar from the sidebar and have it scroll along with the rest of the page*/
+.sidebar {
+    position: static !important; /* Ensure the sidebar is not fixed */
+    overflow: visible !important; /* Remove the scrollbar */
+}
+
