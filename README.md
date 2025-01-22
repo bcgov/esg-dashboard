@@ -6,13 +6,17 @@ Experimental dashboard project to explore non-shiny dashboarding options. Some p
 
 ### Usage
 
-There are four core folders that are required to run the dashboard:
+There are three core folders that are required to run the dashboard:
 
 -   01_data - contains any data for the dashboards
--   02_images - contains the bc gov logo and other images in future
--   03_styles - contains fonts, font styling in fonts.scss, and other styling in styles.css
--   04_scripts - contains scripts for functions, tables, and plots to be used in the dashboards
--   05_dashboards - contains the qmd files for the dashboards
+
+-   02_scripts - contains scripts for functions, tables, and plots to be used in the dashboards
+
+-   03_dashboards - contains the qmd files for the dashboards
+
+    -   images - contains the bc gov logo and other images in future
+
+    -   styles - contains fonts, font styling in fonts.scss, and other styling in styles.css
 
 ### Data Sources
 
