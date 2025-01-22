@@ -38,11 +38,11 @@ source("../04_scripts/soc_plots.R")
 
 ### Information
 
-This dashboard provides a variety of metrics that can be used for benchmarking.
+This dashboard provides a variety of metrics for benchmarking.
 
-Some metrics are available by age or gender. Click on the arrows in the table rows to see these details where available.
+Some metrics contain nested tables. Click on the arrows in the table rows to see these details where available.
 
-Metrics for specific industries are available on the Environment and Social tabs. Note that data is not available for ever metric on every industry.
+Check out industry specific information and charts on the Environment and Social tabs.
 
 Data sources and further information on the metrics are available in the About tab.
 
@@ -58,13 +58,20 @@ t_total
 
 ### Information
 
-The Environmental Metrics by Industry table presents select metrics for benchmarking for the available industries.
+**Features of the Environmental Metrics by Industry table:**
 
-Click on the industry of choice to expand and see what metrics are available for that industry.
+-   This table presents select metrics for benchmarking for the available industries
+-   Click on the industry of choice to expand and see what metrics are available for that industry
+-   Compare metrics across industries by expanding the table and using the filters provided
+-   Save the table data with the Download table as CSV button
 
-To see the values of a specific metric across multiple industries, click on the Expand/collapse all button to expand the full table. Use the industry and metric filters provided to restrict the table to the industries/metrics of interest.
+**Features of the charts (hover over the charts to access some of the features):**
 
-To save the table data, use the Download table as CSV button.
+-   Use the tabs to switch between energy use and GHG emissions data
+-   Click on legend items to remove/add them to the chart
+-   Click the ![camera icon](images/camera.png){width="20"} (top right) to save the chart as a PNG file
+-   Click the ![flag icon](images/tag.png){width="20"} (top right) to show the closest data value when hovering over the chart
+-   Click the ![circle icon](images/circle.png){width="20" height="19"} (bottom right) to expand the chart to full screen
 
 Data sources and further information on the metrics are available in the About tab.
 
@@ -132,13 +139,20 @@ div(Charts[8,"Plot"][[1]])
 
 ### Information
 
-The Social Metrics by Industry table presents select metrics for benchmarking for the available industries.
+**Features of the Social Metrics by Industry table:**
 
-Click on the industry of choice to expand and see what metrics are available for that industry. Note that data is not available for ever metric on every industry.
+-   This table presents select metrics for benchmarking for the available industries
+-   Click on the industry of choice to expand and see what metrics are available for that industry
+-   Compare metrics across industries by expanding the table and using the filters provided
+-   Save the table data with the Download table as CSV button
 
-To see the values of a specific metric across multiple industries, click on the Expand/collapse all button to expand the full table. Use the industry and metric filters provided to restrict the table to the industries/metrics of interest.
+**Features of the charts (hover over the charts to access some of the features):**
 
-To save the table data, use the Download table as CSV button.
+-   Click on legend items to remove/add them to the chart
+-   Click the ![camera icon](images/camera.png){width="20"} (top right) to save the chart as a PNG file
+-   Click the ![flag icon](images/tag.png){width="20"} (top right) to show the closest data value when hovering over the chart
+-   Click the ![circle icon](images/circle.png){width="20" height="19"} (bottom right) to expand the chart to full screen
+-   Use the industry drop down menus to change the chart data, where available
 
 Data sources and further information on the metrics are available in the About tab.
 
