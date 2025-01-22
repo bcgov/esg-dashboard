@@ -4,12 +4,12 @@ execute:
   echo: false
 format:
    dashboard:
-     logo: ../02_images/BCID_V_rgb_rev.png
+     logo: images/BCID_V_rgb_rev.png
      nav-buttons:
         icon: github
         href: https://github.com/bcgov-c/esg-dashboard
      self-contained: true
-     css: ../03_styles/styles.css
+     css: styles/styles.css
 ---
 
 ```{r license}
@@ -27,9 +27,9 @@ format:
 ```
 
 ```{r data}
-source("../04_scripts/tables.R")
-source("../04_scripts/env_plots.R")
-source("../04_scripts/soc_plots.R")
+source("../02_scripts/tables.R")
+source("../02_scripts/env_plots.R")
+source("../02_scripts/soc_plots.R")
 ```
 
 # Summary {scrolling="false"}
