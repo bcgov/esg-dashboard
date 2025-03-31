@@ -10,6 +10,8 @@ format:
         href: https://github.com/bcgov-c/esg-dashboard
      self-contained: true
      css: styles/styles.css
+     include-in-header:
+        text: <script type="text/javascript" src="snowplow.js"></script>
 ---
 
 ```{r license}
