@@ -43,7 +43,6 @@ library(DT)
 ```{r data}
 source("../01_data/data.R")
 
-summary_data <- read_csv("../01_data/summary-table-1.csv")
 ## crosstalk data
 shared_data <- SharedData$new(summary_data)
 ```
