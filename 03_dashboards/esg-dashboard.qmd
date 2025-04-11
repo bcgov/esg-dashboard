@@ -29,9 +29,18 @@ format:
 ```
 
 ```{r data}
-source("../02_scripts/tables.R")
-source("../02_scripts/env_plots.R")
-source("../02_scripts/soc_plots.R")
+
+nrcan <- TRUE ## set to true if NRCAN data has been downloaded - see readme for file details
+create_rds <- FALSE ## set to true if rds data has not been created (need to run data.R)
+
+## set root directory to parent folder
+## note that the root directory will be reset after running this code chunk
+setwd("..")  
+
+if(create_rds) source("01_data/data.R")
+if(nrcan) source("02_scripts/env_plots.R")
+source("02_scripts/tables.R")
+source("02_scripts/soc_plots.R")
 ```
 
 # Summary {scrolling="false"}
@@ -95,21 +104,21 @@ Data sources and further information on the metrics are available in the About t
 ### Row {.env_plot_row}
 
 ```{r}
-div(Charts[1,"Plot"][[1]])
+if(nrcan) div(Charts[1,"Plot"][[1]])
 ```
 
 ```{r}
-div(Charts[2,"Plot"][[1]])
+if(nrcan) div(Charts[2,"Plot"][[1]])
 ```
 
 ### Row
 
 ```{r}
-div(Charts[3,"Plot"][[1]])
+if(nrcan) div(Charts[3,"Plot"][[1]])
 ```
 
 ```{r}
-div(Charts[4,"Plot"][[1]])
+if(nrcan) div(Charts[4,"Plot"][[1]])
 ```
 
 ## GHG Emisssions for the Industrial Sector
@@ -117,21 +126,21 @@ div(Charts[4,"Plot"][[1]])
 ### Row {.env_plot_row}
 
 ```{r}
-div(Charts[5,"Plot"][[1]])
+if(nrcan) div(Charts[5,"Plot"][[1]])
 ```
 
 ```{r}
-div(Charts[6,"Plot"][[1]])
+if(nrcan) div(Charts[6,"Plot"][[1]])
 ```
 
 ### Row
 
 ```{r}
-div(Charts[7,"Plot"][[1]])
+if(nrcan) div(Charts[7,"Plot"][[1]])
 ```
 
 ```{r}
-div(Charts[8,"Plot"][[1]])
+if(nrcan) div(Charts[8,"Plot"][[1]])
 ```
 :::
 

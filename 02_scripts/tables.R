@@ -10,13 +10,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
+#***
+#* This script is sourced by esg-dashboard.qmd
+#* Requires table_data.rds created by 01_data/data.R
+#***
+
 library(tidyverse)
 library(reactable)
 library(htmltools)
 library(tippy)
 
-table_data <- readRDS("../01_data/table_data.rds")
-tooltip_text <- read_csv("../01_data/tooltip_text.csv")
+table_data <- readRDS("01_data/table_data.rds")
+tooltip_text <- read_csv("01_data/tooltip_text.csv")
 
 ## Summary: Total ----
 total_data <- table_data %>% filter(str_detect(Industry, "Total")) %>% select(-Industry_Order)

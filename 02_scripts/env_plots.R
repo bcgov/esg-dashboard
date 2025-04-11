@@ -10,6 +10,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
+#***
+#* This script is sourced by esg-dashboard.qmd
+#* Requires env_plot_data.rds created by 01_data/data.R
+#***
+
 library(tidyverse)
 library(janitor)
 library(plotly)
@@ -17,7 +22,7 @@ library(reactable)
 library(htmltools)
 
 ## read in data
-plot_data <- readRDS("../01_data/env_plot_data.rds")
+plot_data <- readRDS("01_data/env_plot_data.rds")
 
 ## for testing
 # data <- plot_data %>% filter(Topic == "Energy use", Metric == "Total", Variable == "Industry")

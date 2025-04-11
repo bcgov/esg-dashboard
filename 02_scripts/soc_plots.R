@@ -10,6 +10,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
+#***
+#* This script is sourced by esg-dashboard.qmd
+#* Requires soc_plot_data.rds created by 01_data/data.R
+#***
+
 library(tidyverse)
 library(janitor)
 library(plotly)
@@ -17,7 +22,7 @@ library(reactable)
 library(htmltools)
 
 ## read in data
-plot_data <- readRDS("../01_data/soc_plot_data.rds")
+plot_data <- readRDS("01_data/soc_plot_data.rds")
 
 # layout options to use for all charts
 plotly_custom_layout_soc <- function(plot) {
@@ -114,8 +119,8 @@ age_tbl <- browsable( ## make objects render as HTML by default when printed at 
 ot_plots <- plot_data %>% 
   filter(Metric == "Mean weekly overtime hours by gender") %>%
   mutate(Color = case_when(
-    Group2 == "Men" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[1],
-    Group2 == "Women" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[3])) %>%
+    Group2 == "Men+" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[1],
+    Group2 == "Women+" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[3])) %>%
   group_by(Group1) %>%
   nest() %>%
   mutate(Plot = map2(data, Group1, line_plot_1group)) %>%
@@ -166,8 +171,8 @@ complvl_plot <- plot_data %>%
 wkabsence_plot <- plot_data %>%
   filter(Metric == "Work absences by gender and presence of children") %>%
   mutate(Color = case_when(
-    Group1 == "Men" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[1],
-    Group1 == "Women" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[3])) %>%
+    Group1 == "Men+" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[1],
+    Group1 == "Women+" ~ RColorBrewer::brewer.pal(n = 4, name = "Set3")[3])) %>%
   line_plot_2groups()
   
 
