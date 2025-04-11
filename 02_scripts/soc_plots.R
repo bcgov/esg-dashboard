@@ -15,11 +15,11 @@
 #* Requires soc_plot_data.rds created by 01_data/data.R
 #***
 
-library(tidyverse)
-library(janitor)
-library(plotly)
-library(reactable)
-library(htmltools)
+# library(tidyverse)
+# library(janitor)
+# library(plotly)
+# library(reactable)
+# library(htmltools)
 
 ## read in data
 plot_data <- readRDS("01_data/soc_plot_data.rds")

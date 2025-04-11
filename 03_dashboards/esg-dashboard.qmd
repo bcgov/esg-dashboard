@@ -28,6 +28,16 @@ format:
 # See the License for the specific language governing permissions and limitations under the License.
 ```
 
+```{r packages}
+library(tidyverse)
+library(janitor)
+library(plotly)
+library(reactable)
+library(htmltools)
+library(tippy)
+library(cansim)
+```
+
 ```{r data}
 
 nrcan <- TRUE ## set to true if NRCAN data has been downloaded - see readme for file details

@@ -15,9 +15,9 @@
 #* Requires variable nrcan (TRUE/FALSE) which identifies if NRCAN data has been downloaded - see readme for file details
 #***
 
-library(tidyverse)
-library(janitor)
-library(cansim)
+# library(tidyverse)
+# library(janitor)
+# library(cansim)
 
 # Cansim tables ----
 diverted_waste <- get_cansim("3810013801")

@@ -15,10 +15,10 @@
 #* Requires table_data.rds created by 01_data/data.R
 #***
 
-library(tidyverse)
-library(reactable)
-library(htmltools)
-library(tippy)
+# library(tidyverse)
+# library(reactable)
+# library(htmltools)
+# library(tippy)
 
 table_data <- readRDS("01_data/table_data.rds")
 tooltip_text <- read_csv("01_data/tooltip_text.csv")
