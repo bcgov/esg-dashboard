@@ -6,6 +6,8 @@ A dashboard for the Environment, Social and Governance Center of Excellence, dis
 
 This is an experimental dashboard project to explore non-shiny dashboarding options. Some possibilities include quarto documents, quarto dashboards, flexdashboards, incorporating widgets (plotly, leaflet, reactable), and incorporating interactivity with observable or crosstalk.
 
+Download quarto here: https://quarto.org/docs/download/
+
 ### Usage
 
 There are three core folders that are required to run the dashboard:
