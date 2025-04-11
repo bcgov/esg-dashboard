@@ -1,0 +1,172 @@
+---
+title: "Observable Test"
+execute: 
+  echo: false
+format: 
+  dashboard:
+    self-contained: true
+---
+
+```{r r-setup}
+#| output: FALSE
+
+library(tidyverse)
+library(janitor)
+library(lubridate)
+
+source("../01_data/observable_data.R")
+
+## convert data to ojs object
+ojs_define(ojs_data=data)
+ojs_define(ojs_summary_data=summary_data) 
+
+```
+
+```{ojs ojs-setup}
+//| output: false
+
+d3 = require('d3')
+
+// needed to work with ojs data (not sure why)
+data = transpose(ojs_data) 
+summary_data = transpose(ojs_summary_data)
+
+// filter data for Environment tab
+env_data = data.filter(
+  d => d.Category=="Environment"
+)
+
+// filter data for Social tab
+soc_data = data.filter(
+  d => d.Category=="Social"
+)
+```
+
+# Summary sidbar
+
+## {.sidebar}
+
+```{ojs sidebar-tab-1}
+
+viewof pickCategory = Inputs.checkbox(summary_data.map(d => d.Category), {label: "Select Category:", unique: true, value: summary_data.map(d => d.Category)})
+
+viewof pickIndustry = Inputs.select(summary_data.map(d => d.Industry), {label: "Select Industry:", unique: true, multiple:true, value: summary_data.map(d => d.Industry)})
+
+viewof pickMetric = Inputs.select(summary_data.map(d => d["Key Metric"]), {label: "Select Key Metric:", unique: true, multiple:true, value: summary_data.map(d => d["Key Metric"])})
+
+```
+
+## Column
+
+```{ojs summary-tbl-tab-1}
+Inputs.table(summary_data.filter(
+    d => pickCategory.includes(d.Category) && pickIndustry.includes(d.Industry) && pickMetric.includes(d["Key Metric"])),
+    { rows: 200,      //number of rows to display (add this to enable card scrolling)
+    width: "100%",    //width 100% will add the scrolling on the card rather than the table (the table scroll bar shows at the bottom of the table which is not visible if the table is very long)
+    layout: "auto",   //"auto" resizes columns based on data, default "fixed"
+    select: false,    //trying to turn off row selection - not working
+    format: {
+      Unit: unit => html`${unit}`,  //format the Unit column as html (data includes html tags)
+      Year: year => year.toString() //so year doesn't format as 2,204
+}}
+)
+
+```
+
+# Summary toolbar
+
+## {.toolbar}
+
+```{ojs toolbar-tab-2}
+
+viewof pickCategory2 = Inputs.checkbox(summary_data.map(d => d.Category), {label: "Select Category:", unique: true, value: summary_data.map(d => d.Category)})
+
+viewof pickIndustry2 = Inputs.select(summary_data.map(d => d.Industry), {label: "Select Industry", unique: true, value: "All Industries"})
+
+viewof searchMetric = Inputs.search(summary_data, {label: "Filter Key Metric:",placeholder: "Search for Key Metric", column: ["Key Metric"], width: "400px"}) //width is ignored???
+
+```
+
+## Row
+
+```{ojs summary-tbls-tab-2}
+Inputs.table(searchMetric.filter(
+      d => pickCategory2.includes(d.Category) && pickIndustry2==d.Industry
+),
+    { rows: 200,      //number of rows to display (add this to enable card scrolling)
+    width: "100%",    //width 100% will add the scrolling on the card rather than the table (the table scroll bar shows at the bottom of the table which is not visible if the table is very long)
+    layout: "auto",   //"auto" resizes columns based on data, default "fixed"
+    select: false,    //trying to turn off row selection - not working
+    format: {
+      Unit: unit => html`${unit}`,  //format the Unit column as html (data includes html tags)
+      Year: year => year.toString() //so year doesn't format as 2,204
+}}  
+)
+
+```
+
+# Environment
+
+
+```{ojs card-toolbar-1}
+//| content: card-toolbar
+filtered = env_data.filter(
+  d => ["Energy Use per Employee", "GHG Intensity", "GHG Emissions"].includes(d["Key Metric"])
+)
+
+viewof pickIndustry_e = Inputs.select(filtered.map(d => d.Industry), {label: "Select Industry:", unique: true, multiple:false, value: "Manufacturing"})
+```
+
+
+```{ojs}
+//| title: "Industry Metrics"
+//| layout-ncol: 3
+
+Plot.plot({
+  marks: [
+    Plot.lineY(filtered.filter(d => d.Industry == pickIndustry_e && d["Key Metric"] == "Energy Use per Employee"),
+    {x: "Date", y: "Value"}),
+    Plot.dot(filtered.filter(d => d.Industry == pickIndustry_e && d["Key Metric"] == "Energy Use per Employee"),
+    {x: "Date", y: "Value", tip: true})
+  ],
+  x: {label: "Year", type: "time", tickFormat: d3.timeFormat("%Y")},
+  y: {label: "Gigajoules", ticks: 5},
+  caption: "Energy Use per Employee"
+})
+
+Plot.plot({
+  marks: [
+    Plot.lineY(filtered.filter(d => d.Industry == pickIndustry_e && d["Key Metric"] == "GHG Intensity"),
+    {x: "Date", y: "Value"}),
+    Plot.dot(filtered.filter(d => d.Industry == pickIndustry_e && d["Key Metric"] == "GHG Intensity"),
+    {x: "Date", y: "Value", tip: true})
+  ],
+  x: {label: "Year", type: "time", tickFormat: d3.timeFormat("%Y")},
+  y: {label: "tons of CO2e", ticks: 5},
+  caption: "GHG Emissions per Employee (excluding electricity)"
+})
+
+Plot.plot({
+  marks: [
+    Plot.lineY(filtered.filter(d => d.Industry == pickIndustry_e && d["Key Metric"] == "GHG Emissions"),
+    {x: "Date", y: "Value"}),
+    Plot.dot(filtered.filter(d => d.Industry == pickIndustry_e && d["Key Metric"] == "GHG Emissions"),
+    {x: "Date", y: "Value", tip: true})
+  ],
+  x: {label: "Year", type: "time", tickFormat: d3.timeFormat("%Y")},
+  y: {label: "million tons of CO2e", ticks: 5},
+  caption: "Total GHG Emissions (excluding electricity)"
+})
+
+
+```
+
+```{ojs}
+Inputs.table(filtered,
+    {format: {
+      Unit: unit => html`${unit}`,  //format the Unit column as html (data includes html tags)
+      Year: year => year.toString() //so year doesn't format as 2,204
+
+}})
+```
+

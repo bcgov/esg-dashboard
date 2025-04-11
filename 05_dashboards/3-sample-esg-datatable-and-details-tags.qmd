@@ -1,0 +1,210 @@
+---
+title: "ESG Benchmarking Dashboard"
+execute: 
+  echo: false
+format:
+   dashboard:
+     logo: ../02_images/BCID_V_rgb_rev.png
+     nav-buttons:
+        icon: github
+        href: https://github.com/bcgov-c/esg-dashboard
+     self-contained: true
+     css: ../03_styles/styles.css
+     theme: ../03_styles/fonts.scss
+     fontcolor: "#2d2d2d"
+---
+
+```{r license}
+# Copyright 2024 Province of British Columbia
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and limitations under the License.
+```
+
+```{r packages}
+#| output: false
+library(tidyverse)
+library(reactable)
+library(plotly)
+library(scales)
+library(janitor)
+library(lubridate)
+library(crosstalk)
+library(htmltools)
+library(DT)
+```
+
+```{r data}
+social_1 <- tibble::tribble(
+              ~Category,                       ~`Key Metric`, ~Region,                                                  ~Industry, ~Year, ~Value, ~Unit,
+               "Social", "Percent of full-time employment",  "B.C.",                                    "Total, all industries", 2023L,   79.8,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                                   "Goods-producing sector", 2023L,   91.4,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                                              "Agriculture", 2023L,   71.7,   "%",
+               "Social", "Percent of full-time employment",  "B.C.", "Forestry and logging and support activities for forestry", 2023L,    100,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",            "Mining, quarrying, and oil and gas extraction", 2023L,    100,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                                                "Utilities", 2023L,    100,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                                             "Construction", 2023L,   90.4,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                                            "Manufacturing", 2023L,   94.1,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                                "Services-producing sector", 2023L,   77.3,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                               "Wholesale and retail trade", 2023L,   71.7,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                           "Transportation and warehousing", 2023L,   87.4,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",      "Finance, insurance, real estate, rental and leasing", 2023L,   85.9,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",          "Professional, scientific and technical services", 2023L,   86.8,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",         "Business, building and other support services 13", 2023L,   71.7,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                                     "Educational services", 2023L,   73.3,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                        "Health care and social assistance", 2023L,   77.7,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                      "Information, culture and recreation", 2023L,   72.8,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                          "Accommodation and food services", 2023L,   58.9,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",            "Other services (except public administration)", 2023L,   73.8,   "%",
+               "Social", "Percent of full-time employment",  "B.C.",                                    "Public administration", 2023L,     95,   "%"
+              )
+
+social_4 <- tibble::tribble(
+              ~Category,                             ~Key.Metric, ~Region,                                                  ~Industry, ~Year, ~Value, ~Unit,
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                                    "Total, all industries", 2023L,   21.9,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                                "Goods-producing sector 7", 2023L,   23.4,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                                              "Agriculture", 2023L,   39.4,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.", "Forestry and logging and support activities for forestry", 2023L,     35,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",            "Mining, quarrying, and oil and gas extraction", 2023L,   15.7,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                                             "Construction", 2023L,   19.3,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                                            "Manufacturing", 2023L,   27.1,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                                "Services-producing sector", 2023L,   21.6,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                               "Wholesale and retail trade", 2023L,   24.5,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                           "Transportation and warehousing", 2023L,   26.7,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",      "Finance, insurance, real estate, rental and leasing", 2023L,   23.7,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",          "Professional, scientific and technical services", 2023L,   17.9,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",            "Business, building and other support services", 2023L,   28.2,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                                     "Educational services", 2023L,   22.5,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                        "Health care and social assistance", 2023L,   24.3,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                      "Information, culture and recreation", 2023L,   17.6,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                          "Accommodation and food services", 2023L,     10,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",            "Other services (except public administration)", 2023L,   21.8,   "%",
+               "Social", "Percent of employees aged 55 and over",  "B.C.",                                    "Public administration", 2023L,   19.5,   "%"
+              )
+
+social_3 <- tibble::tribble(
+              ~Category,                       ~Key.Metric, ~Region,                                                  ~Industry, ~Year, ~Value, ~Unit,
+               "Social", "Percent of employees aged 25-54",  "B.C.",                                    "Total, all industries", 2023L,   64.7,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                                 "Goods-producing sector 7", 2023L,   66.7,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                                              "Agriculture", 2023L,   41.7,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.", "Forestry and logging and support activities for forestry", 2023L,   54.7,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",            "Mining, quarrying, and oil and gas extraction", 2023L,   81.4,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                                             "Construction", 2023L,   68.8,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                                            "Manufacturing", 2023L,     65,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                                "Services-producing sector", 2023L,   64.3,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                               "Wholesale and retail trade", 2023L,   51.8,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                           "Transportation and warehousing", 2023L,   65.6,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",      "Finance, insurance, real estate, rental and leasing", 2023L,   69.5,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",          "Professional, scientific and technical services", 2023L,   75.6,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",            "Business, building and other support services", 2023L,   58.9,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                                     "Educational services", 2023L,   69.1,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                        "Health care and social assistance", 2023L,   68.3,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                      "Information, culture and recreation", 2023L,   62.1,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                          "Accommodation and food services", 2023L,   52.4,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",            "Other services (except public administration)", 2023L,   65.4,   "%",
+               "Social", "Percent of employees aged 25-54",  "B.C.",                                    "Public administration", 2023L,   75.6,   "%"
+              )
+
+
+social_2 <- tibble::tribble(
+              ~Category,                       ~Key.Metric, ~Region,                                                  ~Industry, ~Year, ~Value, ~Unit,
+               "Social", "Percent of employees aged 15-24",  "B.C.",                                    "Total, all industries", 2023L,   13.3,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                                 "Goods-producing sector 7", 2023L,    9.9,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                                              "Agriculture", 2023L,   18.5,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.", "Forestry and logging and support activities for forestry", 2023L,   10.9,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                                             "Construction", 2023L,     12,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                                            "Manufacturing", 2023L,    7.9,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                                "Services-producing sector", 2023L,   14.1,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                               "Wholesale and retail trade", 2023L,   23.7,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                           "Transportation and warehousing", 2023L,    7.6,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",      "Finance, insurance, real estate, rental and leasing", 2023L,    6.7,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",          "Professional, scientific and technical services", 2023L,    6.5,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",            "Business, building and other support services", 2023L,   12.8,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                                     "Educational services", 2023L,    8.4,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                        "Health care and social assistance", 2023L,    7.4,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                      "Information, culture and recreation", 2023L,   20.3,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                          "Accommodation and food services", 2023L,   37.6,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",            "Other services (except public administration)", 2023L,   12.9,   "%",
+               "Social", "Percent of employees aged 15-24",  "B.C.",                                    "Public administration", 2023L,    4.9,   "%"
+              )
+
+
+```
+
+```{r}
+#| output: false
+dt1 <- reactable(social_1)
+
+dt2 <- DT::datatable(social_2,
+              escape = FALSE,
+              rownames = FALSE,
+              option = list(dom = "t",
+                            scrollY = "100%")
+              )
+
+dt3 <- DT::datatable(social_3,
+              escape = FALSE,
+              rownames = FALSE,
+              option = list(dom = "t",
+                            scrollY = "100%")
+              )
+
+dt4 <- DT::datatable(social_4,
+              escape = FALSE,
+              rownames = FALSE,
+              option = list(dom = "t",
+                            scrollY = "100%")
+              )
+
+```
+
+# Summary
+
+**Expand the highlights below to see the available industry metrics.**
+
+## Row
+
+<details style="margin-bottom:0">
+
+<summary>Social: **Percent of full-time employment** - The total for B.C. (All Industries) in 2023 was **79.8%**.</summary>
+
+`r dt1`
+
+</details>
+
+## Row
+
+<details style="margin-bottom:0">
+
+<summary>Social: **Percent of employees aged 15-24** - The total for B.C. (All Industries) in 2023 was **21.9%**.</summary>
+
+`r dt2`
+
+</details>
+
+## Row
+
+<details style="margin-bottom:0">
+
+<summary>Social: **Percent of employees aged 25-54** - The total for B.C. (All Industries) in 2023 was **64.7%**.</summary>
+
+`r dt3`
+
+</details>
+
+## Row
+
+<details style="margin-bottom:0">
+
+<summary>Social: **Percent of employees aged 55 and over** - The total for B.C. (All Industries) in 2023 was **13.3%**.</summary>
+
+`r dt4`
+
+</details>
