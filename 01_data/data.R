@@ -20,16 +20,16 @@ library(janitor)
 library(cansim)
 
 # Cansim tables ----
-# diverted_waste <- get_cansim("3810013801")
-# waste_disposal <- get_cansim("3810003201")
-# labour <- get_cansim("1410002301")
-# board_rep <- get_cansim("3310050101")
-# disability <- get_cansim("1310075701")
-# union <- get_cansim("1410006901")
-# pay <- get_cansim("1410006301")
-# overtime <- get_cansim("1410007601")
-# compensation_lvl <- get_cansim("1410011301")
-# absences <- get_cansim("1410019401")
+diverted_waste <- get_cansim("3810013801")
+waste_disposal <- get_cansim("3810003201")
+labour <- get_cansim("1410002301")
+board_rep <- get_cansim("3310050101")
+disability <- get_cansim("1310075701")
+union <- get_cansim("1410006901")
+pay <- get_cansim("1410006301")
+overtime <- get_cansim("1410007601")
+compensation_lvl <- get_cansim("1410011301")
+absences <- get_cansim("1410019401")
 
 # Energy use tables ----
 ## file names for the energy use data downloaded from Natural Resources Canada
