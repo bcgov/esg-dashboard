@@ -1,0 +1,7 @@
+# files downloaded from NRCAN:
+# https://oee.nrcan.gc.ca/corporate/statistics/neud/dpa/menus/trends/comprehensive_tables/list.cfm
+agg*
+agr*
+
+# r data files
+*.rds
