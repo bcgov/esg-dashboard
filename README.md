@@ -2,7 +2,9 @@
 
 # esg-dashboard
 
-Experimental dashboard project to explore non-shiny dashboarding options. Some possibilities include quarto documents, quarto dashboards, flexdashboards, incorporating widgets (plotly, leaflet, reactable), and incorporating interactivity with observable or crosstalk.
+A dashboard for the Environment, Social and Governance Center of Excellence, displaying environmental and social indicators to help businesses in B.C. understand how their business compares to provincial or national averages with respect to these indicators. 
+
+This is an experimental dashboard project to explore non-shiny dashboarding options. Some possibilities include quarto documents, quarto dashboards, flexdashboards, incorporating widgets (plotly, leaflet, reactable), and incorporating interactivity with observable or crosstalk.
 
 ### Usage
 
